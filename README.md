@@ -16,8 +16,8 @@ Librariz is a simple GUI based program to manage library. It is written in pure 
 * Edit Book
 * Delete Book
 * Search Book
-* View Book
-* View All Books
+* Views Book
+* Views All Books
 * Reserve Book
 
 
@@ -27,8 +27,8 @@ Librariz is a simple GUI based program to manage library. It is written in pure 
 * Edit Member
 * Delete Member
 * Search Member
-* View Member
-* View All Members
+* Views Member
+* Views All Members
 
 
 ### Staff Management
@@ -37,5 +37,5 @@ Librariz is a simple GUI based program to manage library. It is written in pure 
 * Edit Staff
 * Delete Staff
 * Search Staff
-* View Staff
-* View All Staffs
+* Views Staff
+* Views All Staffs

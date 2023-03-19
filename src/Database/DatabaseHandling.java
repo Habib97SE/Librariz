@@ -9,8 +9,6 @@ import java.util.ArrayList;
 
 import Book.History;
 import Book.Book;
-import User.Staff;
-import User.Borrower;
 
 /**
  * This class is used to handle all database related tasks.
@@ -202,67 +200,67 @@ public class DatabaseHandling
         return bookHistory;
     }
 
-    public static boolean addEmployeeToDatabase (Staff staff)
-    {
-        boolean result = false;
-
-        try
-        {
-            Connection conn = DriverManager.getConnection(url, userName, password);
-            String query = String.format("INSERT INTO staff(firstName, lastName, personalNumber, emailAddress, " +
-                            "phoneNumber, homeAddress, zipCode, city, employmentNumber) VALUES (%s, %s, %s, %s, %s, %s, %s, " +
-                            "%s, %s)", staff.getFirstName(), staff.getLastName(), staff.getPersonalNumber(),
-                    staff.getEmailAddress(), staff.getPhoneNumber(), staff.getHomeAddress(), staff.getZipCode(),
-                    staff.getCity(), staff.getEmploymentNumber());
-
-            PreparedStatement pstmt = conn.prepareStatement(query);
-
-            result = pstmt.execute();
-
-        } catch (SQLException e)
-        {
-            System.out.println("Connection to database failed, try again!");
-            e.printStackTrace();
-
-        }
-        return result;
-    }
-
-    public static boolean addBorrower (Borrower borrower)
-    {
-        boolean result = false;
-        try
-        {
-            Connection conn = DriverManager.getConnection(url, userName, password);
-            String query = "INSERT INTO borrowers(firstName, lastName, personalNumber, emailAddress, phoneNumber, " +
-                    "homeAddress, zipCode, city, libraryCardNumber, currentDebt) VALUES (?, ?, ?, ? , ? , ? , ? , ? , ? , ?)";
-
-
-            PreparedStatement pstmt = conn.prepareStatement(query);
-
-            pstmt.setString(1, borrower.getFirstName());
-            pstmt.setString(2, borrower.getLastName());
-            pstmt.setString(3, borrower.getPersonalNumber());
-            pstmt.setString(4, borrower.getEmailAddress());
-            pstmt.setString(5, borrower.getPhoneNumber());
-            pstmt.setString(6, borrower.getHomeAddress());
-            pstmt.setString(7, borrower.getZipCode());
-            pstmt.setString(8, borrower.getCity());
-            pstmt.setString(9, borrower.getLibraryCardNumber());
-            pstmt.setDouble(10, borrower.getCurrentDebt());
-
-
-            int rowsInserted = pstmt.executeUpdate();
-            if (rowsInserted > 0)
-                result = true;
-        } catch (Exception e)
-        {
-            System.out.println("Connection to database failed, try again!");
-            e.printStackTrace();
-        }
-
-        return result;
-    }
+//    public static boolean addEmployeeToDatabase (Staff staff)
+//    {
+//        boolean result = false;
+//
+//        try
+//        {
+//            Connection conn = DriverManager.getConnection(url, userName, password);
+//            String query = String.format("INSERT INTO staff(firstName, lastName, personalNumber, emailAddress, " +
+//                            "phoneNumber, homeAddress, zipCode, city, employmentNumber) VALUES (%s, %s, %s, %s, %s, %s, %s, " +
+//                            "%s, %s)", staff.getFirstName(), staff.getLastName(), staff.getPersonalNumber(),
+//                    staff.getEmailAddress(), staff.getPhoneNumber(), staff.getHomeAddress(), staff.getZipCode(),
+//                    staff.getCity(), staff.getEmploymentNumber());
+//
+//            PreparedStatement pstmt = conn.prepareStatement(query);
+//
+//            result = pstmt.execute();
+//
+//        } catch (SQLException e)
+//        {
+//            System.out.println("Connection to database failed, try again!");
+//            e.printStackTrace();
+//
+//        }
+//        return result;
+//    }
+//
+//    public static boolean addBorrower (Borrower borrower)
+//    {
+//        boolean result = false;
+//        try
+//        {
+//            Connection conn = DriverManager.getConnection(url, userName, password);
+//            String query = "INSERT INTO borrowers(firstName, lastName, personalNumber, emailAddress, phoneNumber, " +
+//                    "homeAddress, zipCode, city, libraryCardNumber, currentDebt) VALUES (?, ?, ?, ? , ? , ? , ? , ? , ? , ?)";
+//
+//
+//            PreparedStatement pstmt = conn.prepareStatement(query);
+//
+//            pstmt.setString(1, borrower.getFirstName());
+//            pstmt.setString(2, borrower.getLastName());
+//            pstmt.setString(3, borrower.getPersonalNumber());
+//            pstmt.setString(4, borrower.getEmailAddress());
+//            pstmt.setString(5, borrower.getPhoneNumber());
+//            pstmt.setString(6, borrower.getHomeAddress());
+//            pstmt.setString(7, borrower.getZipCode());
+//            pstmt.setString(8, borrower.getCity());
+//            pstmt.setString(9, borrower.getLibraryCardNumber());
+//            pstmt.setDouble(10, borrower.getCurrentDebt());
+//
+//
+//            int rowsInserted = pstmt.executeUpdate();
+//            if (rowsInserted > 0)
+//                result = true;
+//        } catch (Exception e)
+//        {
+//            System.out.println("Connection to database failed, try again!");
+//            e.printStackTrace();
+//        }
+//
+//        return result;
+//    }
 
 
     public static String addDaysToCurrentDate (int i)
@@ -309,7 +307,7 @@ public class DatabaseHandling
         try
         {
             Connection conn = DriverManager.getConnection(url, userName, password);
-            String query = "SELECT * FROM book";
+            String query = "SELECT * FROM books";
             PreparedStatement pstmt = conn.prepareStatement(query);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next())
@@ -326,81 +324,82 @@ public class DatabaseHandling
         }
         return books;
     }
-
-    public static String getLastLibraryCardNumber ()
-    {
-        String lastLibraryCardNumber = null;
-        try
-        {
-            Connection conn = DriverManager.getConnection(url, userName, password);
-            String query = "SELECT libraryCardNumber FROM borrowers ORDER BY libraryCardNumber DESC LIMIT 1";
-            PreparedStatement pstmt = conn.prepareStatement(query);
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next())
-            {
-                lastLibraryCardNumber = rs.getString(1);
-            }
-        } catch (SQLException e)
-        {
-            System.out.println("Failed to connect, try again.");
-            e.printStackTrace();
-        }
-        return lastLibraryCardNumber;
-    }
-
-    public static boolean editBorrower (Borrower borrower)
-    {
-        boolean result = false;
-        try
-        {
-            Connection conn = DriverManager.getConnection(url, userName, password);
-            String query = "UPDATE borrowers SET firstName = ?, lastName = ?, emailAddress = ?, " +
-                    "phoneNumber = ?, homeAddress = ?, zipCode = ?, city = ?, currentDebt = ? " +
-                    "WHERE personalNumber = ?";
-            PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setString(1, borrower.getFirstName());
-            pstmt.setString(2, borrower.getLastName());
-            pstmt.setString(3, borrower.getEmailAddress());
-            pstmt.setString(4, borrower.getPhoneNumber());
-            pstmt.setString(5, borrower.getHomeAddress());
-            pstmt.setString(6, borrower.getZipCode());
-            pstmt.setString(7, borrower.getCity());
-            pstmt.setDouble(9, borrower.getCurrentDebt());
-
-            int rowsUpdated = pstmt.executeUpdate();
-            if (rowsUpdated > 0)
-                result = true;
-
-        } catch (SQLException e)
-        {
-            System.out.println("Failed to connect, try again.");
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public static Borrower findBorrowerByPersonalNumber (String personalNumber)
-    {
-        Borrower borrower = null;
-        try
-        {
-            Connection conn = DriverManager.getConnection(url, userName, password);
-            String query = "SELECT * FROM borrowers WHERE personalNumber = ?";
-            PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setString(1, personalNumber);
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next())
-            {
-                borrower = new Borrower(rs.getString("firstName"), rs.getString("lastName"),
-                        rs.getString("personalNumber"), rs.getString("emailAddress"), rs.getString("phoneNumber"),
-                        rs.getString("homeAddress"), rs.getString("zipCode"), rs.getString("city"));
-            }
-            return borrower;
-        } catch (SQLException e)
-        {
-            System.out.println("Failed to connect, try again.");
-            e.printStackTrace();
-        }
-        return borrower;
-    }
 }
+
+//    public static String getLastLibraryCardNumber ()
+//    {
+//        String lastLibraryCardNumber = null;
+//        try
+//        {
+//            Connection conn = DriverManager.getConnection(url, userName, password);
+//            String query = "SELECT libraryCardNumber FROM borrowers ORDER BY libraryCardNumber DESC LIMIT 1";
+//            PreparedStatement pstmt = conn.prepareStatement(query);
+//            ResultSet rs = pstmt.executeQuery();
+//            while (rs.next())
+//            {
+//                lastLibraryCardNumber = rs.getString(1);
+//            }
+//        } catch (SQLException e)
+//        {
+//            System.out.println("Failed to connect, try again.");
+//            e.printStackTrace();
+//        }
+//        return lastLibraryCardNumber;
+//    }
+//
+//    public static boolean editBorrower (Borrower borrower)
+//    {
+//        boolean result = false;
+//        try
+//        {
+//            Connection conn = DriverManager.getConnection(url, userName, password);
+//            String query = "UPDATE borrowers SET firstName = ?, lastName = ?, emailAddress = ?, " +
+//                    "phoneNumber = ?, homeAddress = ?, zipCode = ?, city = ?, currentDebt = ? " +
+//                    "WHERE personalNumber = ?";
+//            PreparedStatement pstmt = conn.prepareStatement(query);
+//            pstmt.setString(1, borrower.getFirstName());
+//            pstmt.setString(2, borrower.getLastName());
+//            pstmt.setString(3, borrower.getEmailAddress());
+//            pstmt.setString(4, borrower.getPhoneNumber());
+//            pstmt.setString(5, borrower.getHomeAddress());
+//            pstmt.setString(6, borrower.getZipCode());
+//            pstmt.setString(7, borrower.getCity());
+//            pstmt.setDouble(9, borrower.getCurrentDebt());
+//
+//            int rowsUpdated = pstmt.executeUpdate();
+//            if (rowsUpdated > 0)
+//                result = true;
+//
+//        } catch (SQLException e)
+//        {
+//            System.out.println("Failed to connect, try again.");
+//            e.printStackTrace();
+//        }
+//        return result;
+//    }
+//
+//    public static Borrower findBorrowerByPersonalNumber (String personalNumber)
+//    {
+//        Borrower borrower = null;
+//        try
+//        {
+//            Connection conn = DriverManager.getConnection(url, userName, password);
+//            String query = "SELECT * FROM borrowers WHERE personalNumber = ?";
+//            PreparedStatement pstmt = conn.prepareStatement(query);
+//            pstmt.setString(1, personalNumber);
+//            ResultSet rs = pstmt.executeQuery();
+//            while (rs.next())
+//            {
+//                borrower = new Borrower(rs.getString("firstName"), rs.getString("lastName"),
+//                        rs.getString("personalNumber"), rs.getString("emailAddress"), rs.getString("phoneNumber"),
+//                        rs.getString("homeAddress"), rs.getString("zipCode"), rs.getString("city"));
+//            }
+//            return borrower;
+//        } catch (SQLException e)
+//        {
+//            System.out.println("Failed to connect, try again.");
+//            e.printStackTrace();
+//        }
+//        return borrower;
+//    }
+//}

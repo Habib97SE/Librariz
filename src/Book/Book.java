@@ -10,9 +10,10 @@ public class Book
     private String shortDescription;
     private String bookFormat;
     private boolean available;
+    private String bookImage;
 
     public Book (String title, String isbn, String author, String genre, String shortDescription, String bookFormat,
-                 boolean available)
+                 boolean available, String bookImage)
     {
         this.title = title;
         this.isbn = isbn;
@@ -21,6 +22,7 @@ public class Book
         this.shortDescription = shortDescription;
         this.bookFormat = bookFormat;
         this.available = available;
+        this.bookImage = bookImage;
     }
 
     public Book ()
