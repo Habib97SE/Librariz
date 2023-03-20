@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -17,540 +18,259 @@ public class View
     private String emailAddress;
     private String password;
 
-    public void addNewBorrower ()
+    public View (String userType, String emailAddress, String password)
     {
-        JFrame frame = new JFrame("Library Management System");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        frame.setSize(500, 500);
-        frame.setLocationRelativeTo(null);
-
-        JPanel panel = new JPanel();
-
-        JLabel firstNameLabel = new JLabel("First Name: ");
-        JTextField firstNameField = new JTextField(20);
-
-        JLabel lastNameLabel = new JLabel("Last Name: ");
-        JTextField lastNameField = new JTextField(20);
-
-        JLabel personalNumberLabel = new JLabel("Personal Number: ");
-        JTextField personalNumberField = new JTextField(20);
-
-        JLabel emailLabel = new JLabel("Email Address: ");
-        JTextField emailField = new JTextField(20);
-
-        JLabel phoneNumberLabel = new JLabel("Phone Number: ");
-        JTextField phoneNumberField = new JTextField(20);
-
-        JLabel homeAddressLabel = new JLabel("Home Address: ");
-        JTextField homeAddressField = new JTextField(20);
-
-        JLabel zipCodeLabel = new JLabel("Zip Code: ");
-        JTextField zipCodeField = new JTextField(20);
-
-        JLabel cityLabel = new JLabel("City: ");
-        JTextField cityField = new JTextField(20);
-
-        JLabel passwordLabel = new JLabel("Password: ");
-        JPasswordField passwordField = new JPasswordField(20);
-
-        JLabel confirmPasswordLabel = new JLabel("Confirm Password: ");
-        JPasswordField confirmPasswordField = new JPasswordField(20);
-
-        JButton registerButton = new JButton("Register");
-        JButton backButton = new JButton("Back");
-        JButton resetButton = new JButton("Reset");
-
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-        panel.add(firstNameLabel);
-        panel.add(firstNameField);
-        panel.add(lastNameLabel);
-        panel.add(lastNameField);
-        panel.add(personalNumberLabel);
-        panel.add(personalNumberField);
-        panel.add(emailLabel);
-        panel.add(emailField);
-        panel.add(phoneNumberLabel);
-        panel.add(phoneNumberField);
-        panel.add(homeAddressLabel);
-        panel.add(homeAddressField);
-        panel.add(zipCodeLabel);
-        panel.add(zipCodeField);
-        panel.add(cityLabel);
-        panel.add(cityField);
-        panel.add(passwordLabel);
-        panel.add(passwordField);
-        panel.add(confirmPasswordLabel);
-        panel.add(confirmPasswordField);
-        panel.add(registerButton);
-        panel.add(backButton);
-        panel.add(resetButton);
-
-
-        // add action listener to back button
-        backButton.addActionListener(e ->
-        {
-            frame.dispose();
-            new MainGUI.Initial();
-        });
-
-        // add action listener to reset button
-        resetButton.addActionListener(e ->
-        {
-            firstNameField.setText("");
-            lastNameField.setText("");
-            personalNumberField.setText("");
-            emailField.setText("");
-            phoneNumberField.setText("");
-            homeAddressField.setText("");
-            zipCodeField.setText("");
-            cityField.setText("");
-            passwordField.setText("");
-            confirmPasswordField.setText("");
-        });
-
-
-        // add action listener to register button
-        registerButton.addActionListener(e ->
-        {
-            String firstName = firstNameField.getText();
-            String lastName = lastNameField.getText();
-            String personalNumber = personalNumberField.getText();
-            String email = emailField.getText();
-            String phoneNumber = phoneNumberField.getText();
-            String homeAddress = homeAddressField.getText();
-            String zipCode = zipCodeField.getText();
-            String city = cityField.getText();
-            String password = passwordField.getText();
-            String confirmPassword = confirmPasswordField.getText();
-        });
-
-        frame.add(panel);
-        frame.setVisible(true);
-
+        this.userType = userType;
+        this.emailAddress = emailAddress;
+        this.password = password;
     }
 
-    public void addNewLibrarian ()
+    public void showUser ()
     {
-        JFrame frame = new JFrame("Library Management System");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        JFrame frame = new JFrame("Show user information");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(500, 500);
-        frame.setLocationRelativeTo(null);
+        frame.setLayout(new GridLayout(12, 2));
 
-        JPanel panel = new JPanel();
+        JLabel personalNumberLabel = new JLabel("Personal number: ");
+        JTextField personalNumber = new JTextField();
+        JButton searchButton = new JButton("Search");
 
-        JLabel firstNameLabel = new JLabel("First Name: ");
-        JTextField firstNameField = new JTextField(20);
 
-        JLabel lastNameLabel = new JLabel("Last Name: ");
-        JTextField lastNameField = new JTextField(20);
-
-        JLabel personalNumberLabel = new JLabel("Personal Number: ");
-        JTextField personalNumberField = new JTextField(20);
-
-        JLabel emailLabel = new JLabel("Email Address: ");
-        JTextField emailField = new JTextField(20);
-
-        JLabel phoneNumberLabel = new JLabel("Phone Number: ");
-        JTextField phoneNumberField = new JTextField(20);
-
-        JLabel homeAddressLabel = new JLabel("Home Address: ");
-        JTextField homeAddressField = new JTextField(20);
-
-        JLabel zipCodeLabel = new JLabel("Zip Code: ");
-        JTextField zipCodeField = new JTextField(20);
-
-        JLabel cityLabel = new JLabel("City: ");
-        JTextField cityField = new JTextField(20);
-
-        JLabel passwordLabel = new JLabel("Password: ");
-        JPasswordField passwordField = new JPasswordField(20);
-
-        JLabel confirmPasswordLabel = new JLabel("Confirm Password: ");
-        JPasswordField confirmPasswordField = new JPasswordField(20);
-
-        JButton registerButton = new JButton("Register");
-        JButton backButton = new JButton("Back");
-        JButton resetButton = new JButton("Reset");
-
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-        panel.add(firstNameLabel);
-        panel.add(firstNameField);
-        panel.add(lastNameLabel);
-        panel.add(lastNameField);
-        panel.add(personalNumberLabel);
-        panel.add(personalNumberField);
-        panel.add(emailLabel);
-        panel.add(emailField);
-        panel.add(phoneNumberLabel);
-        panel.add(phoneNumberField);
-        panel.add(homeAddressLabel);
-        panel.add(homeAddressField);
-        panel.add(zipCodeLabel);
-        panel.add(zipCodeField);
-        panel.add(cityLabel);
-        panel.add(cityField);
-        panel.add(passwordLabel);
-        panel.add(passwordField);
-        panel.add(confirmPasswordLabel);
-        panel.add(confirmPasswordField);
-        panel.add(registerButton);
-        panel.add(backButton);
-        panel.add(resetButton);
-
-        // add action listener to back button
-        backButton.addActionListener(e ->
+        Controller controller = new Controller();
+        User user = controller.getUser(personalNumber.getText());
+        if (user != null)
         {
-            frame.dispose();
-            new MainGUI.Initial();
-        });
+            JFrame showUserframe = new JFrame("User");
+            showUserframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            showUserframe.setSize(500, 500);
+            showUserframe.setLayout(new GridLayout(12, 2));
 
-        // add action listener to reset button
-        resetButton.addActionListener(e ->
+            JLabel firstNameLabel = new JLabel("First name: ");
+            JLabel firstName = new JLabel(user.getFirstName());
+            JLabel lastNameLabel = new JLabel("Last name: ");
+            JLabel lastName = new JLabel(user.getLastName());
+            JLabel emailAddressLabel = new JLabel("Email address: ");
+            JLabel emailAddress = new JLabel(user.getEmailAddress());
+            JLabel phoneNumberLabel = new JLabel("Phone number: ");
+            JLabel phoneNumber = new JLabel(user.getPhoneNumber());
+            JLabel homeAddressLabel = new JLabel("Home address: ");
+            JLabel homeAddress = new JLabel(user.getHomeAddress());
+            JLabel zipCodeLabel = new JLabel("Zip code: ");
+            JLabel zipCode = new JLabel(user.getZipCode());
+            JLabel cityLabel = new JLabel("City: ");
+            JLabel city = new JLabel(user.getCity());
+            JLabel identifierNumberLabel = new JLabel("Identifier number: ");
+            JLabel identifierNumber = new JLabel(user.getIdentifierNumber());
+            JLabel currentFineLabel = new JLabel("Current fine: ");
+            JLabel currentFine = new JLabel(String.valueOf(user.getCurrentFine()));
+            JLabel userTypeLabel = new JLabel("User type: ");
+            JLabel userType = new JLabel(user.getUserType());
+            personalNumberLabel = new JLabel("Personal number: ");
+            JLabel personalNumberLabelValue = new JLabel(user.getPersonalNumber());
+
+            JButton closeButton = new JButton("Close");
+
+            showUserframe.add(firstNameLabel);
+            showUserframe.add(firstName);
+            showUserframe.add(lastNameLabel);
+            showUserframe.add(lastName);
+            showUserframe.add(emailAddressLabel);
+            showUserframe.add(emailAddress);
+            showUserframe.add(phoneNumberLabel);
+            showUserframe.add(phoneNumber);
+            showUserframe.add(homeAddressLabel);
+            showUserframe.add(homeAddress);
+            showUserframe.add(zipCodeLabel);
+            showUserframe.add(zipCode);
+            showUserframe.add(cityLabel);
+            showUserframe.add(city);
+            showUserframe.add(identifierNumberLabel);
+            showUserframe.add(identifierNumber);
+            showUserframe.add(currentFineLabel);
+            showUserframe.add(currentFine);
+            showUserframe.add(userTypeLabel);
+            showUserframe.add(userType);
+            showUserframe.add(personalNumberLabel);
+            showUserframe.add(personalNumberLabelValue);
+            showUserframe.add(closeButton);
+
+            showUserframe.setVisible(true);
+
+            closeButton.addActionListener(e -> showUserframe.dispose());
+
+
+        } else
         {
-            firstNameField.setText("");
-            lastNameField.setText("");
-            personalNumberField.setText("");
-            emailField.setText("");
-            phoneNumberField.setText("");
-            homeAddressField.setText("");
-            zipCodeField.setText("");
-            cityField.setText("");
-            passwordField.setText("");
-            confirmPasswordField.setText("");
-        });
-
-        // add action listener to register button
-        registerButton.addActionListener(e ->
-        {
-            String firstName = firstNameField.getText();
-            String lastName = lastNameField.getText();
-            String personalNumber = personalNumberField.getText();
-            String email = emailField.getText();
-            String phoneNumber = phoneNumberField.getText();
-            String homeAddress = homeAddressField.getText();
-            String zipCode = zipCodeField.getText();
-            String city = cityField.getText();
-            String password = passwordField.getText();
-            String confirmPassword = confirmPasswordField.getText();
-        });
-    }
-
-    /**
-     * <p>
-     * This method is used to edit the user information in the database and the GUI interface.
-     * </p>
-     * <p>
-     * Example of how to use this method:
-     * <pre>
-     *          {@code
-     *          new MainGUI.EditUser(userType);
-     *          }
-     *          </pre>
-     * This will open the edit user interface.
-     * </p>
-     */
-    public void editUser ()
-    {
-        JFrame frame = new JFrame("Library Management System");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        frame.setSize(500, 500);
-        frame.setLocationRelativeTo(null);
-
-        JPanel panel = new JPanel();
-
-        JLabel firstNameLabel = new JLabel("First Name: ");
-        JTextField firstNameField = new JTextField(20);
-
-        JLabel lastNameLabel = new JLabel("Last Name: ");
-        JTextField lastNameField = new JTextField(20);
-
-        JLabel personalNumberLabel = new JLabel("Personal Number: ");
-        JTextField personalNumberField = new JTextField(20);
-
-        JLabel emailLabel = new JLabel("Email Address: ");
-        JTextField emailField = new JTextField(20);
-
-        JLabel phoneNumberLabel = new JLabel("Phone Number: ");
-        JTextField phoneNumberField = new JTextField(20);
-
-        JLabel homeAddressLabel = new JLabel("Home Address: ");
-        JTextField homeAddressField = new JTextField(20);
-
-        JLabel zipCodeLabel = new JLabel("Zip Code: ");
-        JTextField zipCodeField = new JTextField(20);
-
-        JLabel cityLabel = new JLabel("City: ");
-        JTextField cityField = new JTextField(20);
-
-        JLabel passwordLabel = new JLabel("Password: ");
-        JPasswordField passwordField = new JPasswordField(20);
-
-        JLabel confirmPasswordLabel = new JLabel("Confirm Password: ");
-        JPasswordField confirmPasswordField = new JPasswordField(20);
-
-        JButton registerButton = new JButton("Register");
-        JButton backButton = new JButton("Back");
-        JButton resetButton = new JButton("Reset");
-
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-        panel.add(firstNameLabel);
-        panel.add(firstNameField);
-        panel.add(lastNameLabel);
-        panel.add(lastNameField);
-        panel.add(personalNumberLabel);
-        panel.add(personalNumberField);
-        panel.add(emailLabel);
-        panel.add(emailField);
-        panel.add(phoneNumberLabel);
-        panel.add(phoneNumberField);
-        panel.add(homeAddressLabel);
-        panel.add(homeAddressField);
-        panel.add(zipCodeLabel);
-        panel.add(zipCodeField);
-        panel.add(cityLabel);
-        panel.add(cityField);
-        panel.add(passwordLabel);
-        panel.add(passwordField);
-        panel.add(confirmPasswordLabel);
-        panel.add(confirmPasswordField);
-        panel.add(registerButton);
-        panel.add(backButton);
-        panel.add(resetButton);
-
-        // add action listener to back button
-        backButton.addActionListener(e ->
-        {
-            frame.dispose();
-            new MainGUI.Initial();
-        });
-
-        // add action listener
-        resetButton.addActionListener(e ->
-        {
-            firstNameField.setText("");
-            lastNameField.setText("");
-            personalNumberField.setText("");
-            emailField.setText("");
-            phoneNumberField.setText("");
-            homeAddressField.setText("");
-            zipCodeField.setText("");
-            cityField.setText("");
-            passwordField.setText("");
-            confirmPasswordField.setText("");
-        });
-
-        // add action listener to register button
-        registerButton.addActionListener(e ->
-        {
-            String firstName = firstNameField.getText();
-            String lastName = lastNameField.getText();
-            String personalNumber = personalNumberField.getText();
-            String email = emailField.getText();
-            String phoneNumber = phoneNumberField.getText();
-            String homeAddress = homeAddressField.getText();
-            String zipCode = zipCodeField.getText();
-            String city = cityField.getText();
-            String password = passwordField.getText();
-            String confirmPassword = confirmPasswordField.getText();
-        });
-
-        frame.add(panel);
-        frame.setVisible(true);
-    }
-
-    /**
-     * <p>
-     * This method is used to delete the user information in the database and the GUI interface.
-     * </p>
-     * <p>
-     * <pre>
-     *         Example of how to use this method:
-     *                              {@code
-     *                                  new MainGUI.DeleteUser(userType);
-     *                                  }
-     *
-     *     </pre>
-     * </p>
-     */
-    public void deleteUser ()
-    {
-        JFrame frame = new JFrame("Library Management System");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        frame.setSize(500, 500);
-        frame.setLocationRelativeTo(null);
-
-        JPanel panel = new JPanel();
-
-        JLabel firstNameLabel = new JLabel("First Name: ");
-        JTextField firstNameField = new JTextField(20);
-
-        JLabel lastNameLabel = new JLabel("Last Name: ");
-        JTextField lastNameField = new JTextField(20);
-
-        JLabel personalNumberLabel = new JLabel("Personal Number: ");
-        JTextField personalNumberField = new JTextField(20);
-
-        JLabel emailLabel = new JLabel("Email Address: ");
-        JTextField emailField = new JTextField(20);
-
-        JLabel phoneNumberLabel = new JLabel("Phone Number: ");
-        JTextField phoneNumberField = new JTextField(20);
-
-        JLabel homeAddressLabel = new JLabel("Home Address: ");
-        JTextField homeAddressField = new JTextField(20);
-
-        JLabel zipCodeLabel = new JLabel("Zip Code: ");
-        JTextField zipCodeField = new JTextField(20);
-
-        JLabel cityLabel = new JLabel("City: ");
-        JTextField cityField = new JTextField(20);
-
-        JLabel passwordLabel = new JLabel("Password: ");
-        JPasswordField passwordField = new JPasswordField(20);
-
-        JLabel confirmPasswordLabel = new JLabel("Confirm Password: ");
-        JPasswordField confirmPasswordField = new JPasswordField(20);
-
-        JButton registerButton = new JButton("Register");
-        JButton backButton = new JButton("Back");
-        JButton resetButton = new JButton("Reset");
-
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-        panel.add(firstNameLabel);
-        panel.add(firstNameField);
-        panel.add(lastNameLabel);
-        panel.add(lastNameField);
-        panel.add(personalNumberLabel);
-        panel.add(personalNumberField);
-        panel.add(emailLabel);
-        panel.add(emailField);
-        panel.add(phoneNumberLabel);
-        panel.add(phoneNumberField);
-        panel.add(homeAddressLabel);
-        panel.add(homeAddressField);
-        panel.add(zipCodeLabel);
-        panel.add(zipCodeField);
-        panel.add(cityLabel);
-        panel.add(cityField);
-        panel.add(passwordLabel);
-        panel.add(passwordField);
-        panel.add(confirmPasswordLabel);
-        panel.add(confirmPasswordField);
-        panel.add(registerButton);
-        panel.add(backButton);
-        panel.add(resetButton);
-
-        // add action listener to back button
-        backButton.addActionListener(e ->
-        {
-            frame.dispose();
-            new MainGUI.Initial();
-        });
-
-        // add action listener
-        resetButton.addActionListener(e ->
-        {
-            firstNameField.setText("");
-            lastNameField.setText("");
-            personalNumberField.setText("");
-            emailField.setText("");
-            phoneNumberField.setText("");
-            homeAddressField.setText("");
-            zipCodeField.setText("");
-            cityField.setText("");
-            passwordField.setText("");
-            confirmPasswordField.setText("");
-        });
-
-        // add action listener to register button
-        registerButton.addActionListener(e ->
-        {
-            String firstName = firstNameField.getText();
-            String lastName = lastNameField.getText();
-            String personalNumber = personalNumberField.getText();
-            String email = emailField.getText();
-            String phoneNumber = phoneNumberField.getText();
-            String homeAddress = homeAddressField.getText();
-            String zipCode = zipCodeField.getText();
-            String city = cityField.getText();
-            String password = passwordField.getText();
-            String confirmPassword = confirmPasswordField.getText();
-        });
-
-        frame.add(panel);
-        frame.setVisible(true);
-
-    }
-
-    /**
-     * <p>
-     * This method is used to update the user information in the database and the GUI interface.
-     * </p>
-     * <p>
-     * <pre>
-     * Example of how to use this method:
-     *  {@code
-     *      new MainGUI.UpdateUser(userType);
-     *  }
-     *
-     *     </pre>
-     * </p>
-     */
-    public void getUserList ()
-    {
-        ArrayList<ArrayList<String>> users = new ArrayList<>();
-        users = Controller.getUsers();
-
-
-        String[] columnNames = {"First Name", "Last Name", "Personal Number", "Email Address", "Phone Number", "Home Address", "Zip Code", "City", "Password"};
-        String[][] data = new String[users.size()][10];
-        for (int i = 0; i < users.size(); i++)
-        {
-            for (int j = 0; j < 10; j++)
-            {
-                data[i][j] = users.get(i).get(j);
-            }
+            JOptionPane.showMessageDialog(null, "User not found");
         }
-        JTable table = new JTable(data, columnNames);
-        table.setPreferredScrollableViewportSize(new Dimension(500, 70));
-        table.setFillsViewportHeight(true);
+    }
 
-        JScrollPane scrollPane = new JScrollPane(table);
+    public void showUsers ()
+    {
+        Controller controller = new Controller();
+        ArrayList<User> users = controller.getAllUsers();
+        if (users != null)
+        {
+            JFrame frame = new JFrame("Users");
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.setSize(500, 500);
+            frame.setLayout(new GridLayout(users.size() + 1, 12));
 
-        // set padding around panel
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            JLabel firstNameLabel = new JLabel("First name");
+            JLabel lastNameLabel = new JLabel("Last name");
+            JLabel emailAddressLabel = new JLabel("Email address");
+            JLabel phoneNumberLabel = new JLabel("Phone number");
+            JLabel homeAddressLabel = new JLabel("Home address");
+            JLabel zipCodeLabel = new JLabel("Zip code");
+            JLabel cityLabel = new JLabel("City");
+            JLabel identifierNumberLabel = new JLabel("Identifier number");
+            JLabel currentFineLabel = new JLabel("Current fine");
+            JLabel userTypeLabel = new JLabel("User type");
+            JLabel personalNumberLabel = new JLabel("Personal number");
+            JLabel copyLabel = new JLabel("Copy");
 
-        JFrame frame = new JFrame("Library Management System");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(scrollPane, BorderLayout.CENTER);
-        frame.setSize(800, 800);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+            frame.add(firstNameLabel);
+            frame.add(lastNameLabel);
+            frame.add(emailAddressLabel);
+            frame.add(phoneNumberLabel);
+            frame.add(homeAddressLabel);
+            frame.add(zipCodeLabel);
+            frame.add(cityLabel);
+            frame.add(identifierNumberLabel);
+            frame.add(currentFineLabel);
+            frame.add(userTypeLabel);
+            frame.add(personalNumberLabel);
+            frame.add(copyLabel);
+
+            for (User user : users)
+            {
+                JLabel firstName = new JLabel(user.getFirstName());
+                JLabel lastName = new JLabel(user.getLastName());
+                JLabel emailAddress = new JLabel(user.getEmailAddress());
+                JLabel phoneNumber = new JLabel(user.getPhoneNumber());
+                JLabel homeAddress = new JLabel(user.getHomeAddress());
+                JLabel zipCode = new JLabel(user.getZipCode());
+                JLabel city = new JLabel(user.getCity());
+                JLabel identifierNumber = new JLabel(user.getIdentifierNumber());
+                JLabel currentFine = new JLabel(String.valueOf(user.getCurrentFine()));
+                JLabel userType = new JLabel(user.getUserType());
+                JLabel personalNumber = new JLabel(user.getPersonalNumber());
+                JLabel copy = new JLabel("Copy");
+
+                copy.addMouseListener(new MouseAdapter()
+                {
+                    @Override
+                    public void mouseClicked (MouseEvent e)
+                    {
+                        StringSelection stringSelection = new StringSelection(personalNumber.getText());
+                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        clipboard.setContents(stringSelection, null);
+                    }
+                });
+
+                frame.add(firstName);
+                frame.add(lastName);
+                frame.add(emailAddress);
+                frame.add(phoneNumber);
+                frame.add(homeAddress);
+                frame.add(zipCode);
+                frame.add(city);
+                frame.add(identifierNumber);
+                frame.add(currentFine);
+                frame.add(userType);
+                frame.add(personalNumber);
+                frame.add(copy);
 
 
-        table.addMouseListener(new MouseAdapter()
+                // add action listener to copy cell content to clipboard on click
+
+
+            }
+        } else
+        {
+            JOptionPane.showMessageDialog(null, "No users found");
+        }
+    }
+
+    public void addUser ()
+    {
+        JFrame frame = new JFrame("Add user");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(500, 500);
+        frame.setLayout(new GridLayout(12, 2));
+
+        JLabel firstNameLabel = new JLabel("First name: ");
+        JTextField firstName = new JTextField();
+        JLabel lastNameLabel = new JLabel("Last name: ");
+        JTextField lastName = new JTextField();
+        JLabel emailAddressLabel = new JLabel("Email address: ");
+        JTextField emailAddress = new JTextField();
+        JLabel phoneNumberLabel = new JLabel("Phone number: ");
+        JTextField phoneNumber = new JTextField();
+        JLabel homeAddressLabel = new JLabel("Home address: ");
+        JTextField homeAddress = new JTextField();
+        JLabel zipCodeLabel = new JLabel("Zip code: ");
+        JTextField zipCode = new JTextField();
+        JLabel cityLabel = new JLabel("City: ");
+        JTextField city = new JTextField();
+        JLabel identifierNumberLabel = new JLabel("Identifier number: ");
+        JTextField identifierNumber = new JTextField();
+        JLabel currentFineLabel = new JLabel("Current fine: ");
+        JTextField currentFine = new JTextField();
+        JLabel userTypeLabel = new JLabel("User type: ");
+        JTextField userType = new JTextField();
+        JLabel personalNumberLabel = new JLabel("Personal number: ");
+        JTextField personalNumber = new JTextField();
+
+        JButton addUserButton = new JButton("Add user");
+
+
+        frame.add(firstNameLabel);
+        frame.add(firstName);
+        frame.add(lastNameLabel);
+        frame.add(lastName);
+        frame.add(emailAddressLabel);
+        frame.add(emailAddress);
+        frame.add(phoneNumberLabel);
+        frame.add(phoneNumber);
+        frame.add(homeAddressLabel);
+        frame.add(homeAddress);
+        frame.add(zipCodeLabel);
+        frame.add(zipCode);
+        frame.add(cityLabel);
+        frame.add(city);
+        frame.add(identifierNumberLabel);
+        frame.add(identifierNumber);
+        frame.add(currentFineLabel);
+        frame.add(currentFine);
+        frame.add(userTypeLabel);
+        frame.add(userType);
+        frame.add(personalNumberLabel);
+        frame.add(personalNumber);
+        frame.add(addUserButton);
+
+        addUserButton.addActionListener(new ActionListener()
         {
             @Override
-            public void mouseClicked (MouseEvent e)
+            public void actionPerformed (ActionEvent e)
             {
-                int row = table.getSelectedRow();
-                int col = table.getSelectedColumn();
-                Object cellData = table.getValueAt(row, col);
+                Controller controller = new Controller();
+                User user = new User();
+                user.setFirstName(firstName.getText());
+                user.setLastName(lastName.getText());
+                user.setEmailAddress(emailAddress.getText());
+                user.setPhoneNumber(phoneNumber.getText());
+                user.setHomeAddress(homeAddress.getText());
+                user.setZipCode(zipCode.getText());
+                user.setCity(city.getText());
+                user.setIdentifierNumber(identifierNumber.getText());
+                user.setCurrentFine(Double.parseDouble(currentFine.getText()));
+                user.setUserType(userType.getText());
+                user.setPersonalNumber(personalNumber.getText());
 
-                StringSelection stringSelection = new StringSelection(cellData.toString());
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                clipboard.setContents(stringSelection, null);
-
-                JOptionPane.showMessageDialog(null, "Copied to clipboard");
-
+                controller.addUser(user);
+                frame.dispose();
             }
         });
 
