@@ -13,35 +13,64 @@ public class Main
     public static void main (String[] argh)
     {
 
-        JFrame mainFramee = new JFrame("Library Management System");
-        mainFramee.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFramee.setSize(1000, 800);
-        mainFramee.setVisible(true);
 
+        JFrame mainFrame = new JFrame("Library Management System");
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.setSize(800, 600);
+        mainFrame.setLayout(new BorderLayout());
 
-        JMenuBar menuBar = new JMenuBar();
+        JPanel panel = new JPanel();
 
-        JMenu fileMenu = new JMenu("File");
+        JButton addUserButton = new JButton("Add User");
+        JButton editUserButton = new JButton("Edit User");
+        JButton deleteUserButton = new JButton("Delete User");
+        JButton viewUserButton = new JButton("View User");
+        JButton viewUsersButton = new JButton("View Users");
 
-        JMenuItem exitMenuItem = new JMenuItem("users list");
-        JMenuItem aboutMenuItem = new JMenuItem("About");
+        panel.add(addUserButton);
+        panel.add(editUserButton);
+        panel.add(deleteUserButton);
+        panel.add(viewUserButton);
+        panel.add(viewUsersButton);
 
-        fileMenu.add(exitMenuItem);
-        fileMenu.add(aboutMenuItem);
-
-        menuBar.add(fileMenu);
-
-        mainFramee.setJMenuBar(menuBar);
-
-        View view = new View();
-
-        exitMenuItem.addActionListener(e ->
+        mainFrame.add(panel, BorderLayout.NORTH);
+        addUserButton.addActionListener(e ->
         {
-            view.getUserList();
-            // when the user click X button, the program should go back to main frame
-            mainFramee.setVisible(true);
+            View view = new User.View();
+            view.addUser();
         });
 
+        editUserButton.addActionListener(e ->
+        {
+            User.View userView = new User.View();
+            userView.editUser();
+        });
+
+        deleteUserButton.addActionListener(e ->
+        {
+            User.View view = new User.View();
+            view.deleteUser();
+        });
+
+        viewUserButton.addActionListener(e ->
+        {
+            User.View view = new User.View();
+            try
+            {
+                view.showUser();
+            } catch (Exception ex)
+            {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        viewUsersButton.addActionListener(e ->
+        {
+            User.View view = new User.View();
+            view.showUsers();
+        });
+
+        mainFrame.setVisible(true);
 
     }
 }

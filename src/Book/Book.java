@@ -1,34 +1,67 @@
 package Book;
-import Database.DatabaseHandling;
-
 public class Book
 {
     private String title;
-    private String isbn;
     private String author;
+    private String publisher;
+    private String isbn;
     private String genre;
-    private String shortDescription;
-    private String bookFormat;
-    private boolean available;
-    private String bookImage;
+    private String language;
+    private String description;
+    private String publicationDate;
+    private String edition;
+    private String numberOfPages;
+    private String numberOfCopies;
+    private String numberOfAvailableCopies;
 
-    public Book (String title, String isbn, String author, String genre, String shortDescription, String bookFormat,
-                 boolean available, String bookImage)
+    public Book (String title, String author, String publisher, String isbn, String genre, String language, String description, String publicationDate, String edition, String numberOfPages, String numberOfCopies, String numberOfAvailableCopies)
     {
         this.title = title;
-        this.isbn = isbn;
         this.author = author;
+        this.publisher = publisher;
+        this.isbn = isbn;
         this.genre = genre;
-        this.shortDescription = shortDescription;
-        this.bookFormat = bookFormat;
-        this.available = available;
-        this.bookImage = bookImage;
+        this.language = language;
+        this.description = description;
+        this.publicationDate = publicationDate;
+        this.edition = edition;
+        this.numberOfPages = numberOfPages;
+        this.numberOfCopies = numberOfCopies;
+        this.numberOfAvailableCopies = numberOfAvailableCopies;
     }
 
     public Book ()
     {
         this.title = "";
-        this.isbn= "";
+        this.author = "";
+        this.publisher = "";
+        this.isbn = "";
+        this.genre = "";
+        this.language = "";
+        this.description = "";
+        this.publicationDate = "";
+        this.edition = "";
+        this.numberOfPages = "";
+        this.numberOfCopies = "";
+        this.numberOfAvailableCopies = "";
+        this.bookID = "";
+    }
+
+    public Book (Book other)
+    {
+        this.title = other.title;
+        this.author = other.author;
+        this.publisher = other.publisher;
+        this.isbn = other.isbn;
+        this.genre = other.genre;
+        this.language = other.language;
+        this.description = other.description;
+        this.publicationDate = other.publicationDate;
+        this.edition = other.edition;
+        this.numberOfPages = other.numberOfPages;
+        this.numberOfCopies = other.numberOfCopies;
+        this.numberOfAvailableCopies = other.numberOfAvailableCopies;
+        this.bookID = other.bookID;
     }
 
     public String getTitle ()
@@ -41,16 +74,6 @@ public class Book
         this.title = title;
     }
 
-    public String getIsbn ()
-    {
-        return isbn;
-    }
-
-    public void setIsbn (String isbn)
-    {
-        this.isbn = isbn;
-    }
-
     public String getAuthor ()
     {
         return author;
@@ -59,6 +82,26 @@ public class Book
     public void setAuthor (String author)
     {
         this.author = author;
+    }
+
+    public String getPublisher ()
+    {
+        return publisher;
+    }
+
+    public void setPublisher (String publisher)
+    {
+        this.publisher = publisher;
+    }
+
+    public String getIsbn ()
+    {
+        return isbn;
+    }
+
+    public void setIsbn (String isbn)
+    {
+        this.isbn = isbn;
     }
 
     public String getGenre ()
@@ -71,67 +114,99 @@ public class Book
         this.genre = genre;
     }
 
-    public String getShortDescription ()
+    public String getLanguage ()
     {
-        return shortDescription;
+        return language;
     }
 
-    public void setShortDescription (String shortDescription)
+    public void setLanguage (String language)
     {
-        this.shortDescription = shortDescription;
+        this.language = language;
     }
 
-    public String getBookFormat ()
+    public String getDescription ()
     {
-        return bookFormat;
+        return description;
     }
 
-    public void setBookFormat (String bookFormat)
+    public void setDescription (String description)
     {
-        this.bookFormat = bookFormat;
+        this.description = description;
     }
 
-    public boolean isAvailable ()
+    public String getPublicationDate ()
     {
-        return available;
+        return publicationDate;
     }
 
-    public void setAvailability (boolean available)
+    public void setPublicationDate (String publicationDate)
     {
-        this.available = available;
+        this.publicationDate = publicationDate;
     }
 
-    private String getReturnDate ()
+    public String getEdition ()
     {
-        return "2023-03-25";
+        return edition;
     }
 
-    private String printAvailability ()
+    public void setEdition (String edition)
     {
-        return this.isAvailable() ? "Yes" : this.getReturnDate();
+        this.edition = edition;
     }
 
-    public Integer getBookId()
+    public String getNumberOfPages ()
     {
-        return DatabaseHandling.getRowID("book", "isbn", this.getIsbn());
+        return numberOfPages;
+    }
+
+    public void setNumberOfPages (String numberOfPages)
+    {
+        this.numberOfPages = numberOfPages;
+    }
+
+    public String getNumberOfCopies ()
+    {
+        return numberOfCopies;
+    }
+
+    public void setNumberOfCopies (String numberOfCopies)
+    {
+        this.numberOfCopies = numberOfCopies;
+    }
+
+    public String getNumberOfAvailableCopies ()
+    {
+        return numberOfAvailableCopies;
+    }
+
+    public void setNumberOfAvailableCopies (String numberOfAvailableCopies)
+    {
+        this.numberOfAvailableCopies = numberOfAvailableCopies;
+    }
+
+    public String getBookID ()
+    {
+        return bookID;
+    }
+
+    public void setBookID (String bookID)
+    {
+        this.bookID = bookID;
     }
 
     public boolean equals (Book other)
     {
-        return this.getIsbn().equals(other.getIsbn());
+        return this.getBookID().equals(other.getBookID());
+    }
+
+    public boolean equals (String isbn)
+    {
+        return this.getIsbn().equals(isbn);
     }
 
     @Override
     public String toString ()
     {
-        return String.format("""
-                        Title: %s\s
-                        ISBN: %s\s
-                        Author: %s\s
-                        Genre: %s\s
-                        Short description: %s\s
-                        Format: %s\s
-                        Available: %s""", this.getTitle(), this.getIsbn(), this.getAuthor(), this.getGenre(),
-                this.getShortDescription(), this.getBookFormat(), this.printAvailability());
+        return "Title: " + title + " Author: " + author + " Publisher: " + publisher + " ISBN: " + isbn + " Genre: " + genre + " Language: " + language + " Description: " + description + " Publication Date: " + publicationDate + " Edition: " + edition + " Number of Pages: " + numberOfPages + " Number of Copies: " + numberOfCopies + " Number of Available Copies: " + numberOfAvailableCopies + " Book ID: " + bookID;
     }
 }

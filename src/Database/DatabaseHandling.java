@@ -32,6 +32,7 @@ public class DatabaseHandling
     {
         try
         {
+            Connection connection = DriverManager.getConnection(url, userName, password);
             PreparedStatement statement = connection.prepareStatement(query);
             return statement.executeUpdate() > 0;
         } catch (SQLException e)
@@ -45,6 +46,7 @@ public class DatabaseHandling
     {
         try
         {
+            Connection connection = DriverManager.getConnection(url, userName, password);
             PreparedStatement statement = connection.prepareStatement(query);
             ResultSet resultSet = statement.executeQuery();
             return resultSet.next();
@@ -55,11 +57,28 @@ public class DatabaseHandling
         }
     }
 
+    public static String getSingleValue (String query, String column)
+    {
+        try
+        {
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement statement = connection.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next())
+                return resultSet.getString(column);
+            return null;
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public static ResultSet getRow (String query)
     {
         try
         {
+            Connection connection = DriverManager.getConnection(url, userName, password);
             PreparedStatement statement = connection.prepareStatement(query);
             return statement.executeQuery();
 
@@ -70,10 +89,11 @@ public class DatabaseHandling
         }
     }
 
-    public static ResultSet getRows(String query)
+    public static ResultSet getRows (String query)
     {
         try
         {
+            Connection connection = DriverManager.getConnection(url, userName, password);
             PreparedStatement statement = connection.prepareStatement(query);
             return statement.executeQuery();
         } catch (SQLException e)
@@ -83,9 +103,11 @@ public class DatabaseHandling
         }
     }
 
-    public boolean deleteRow(String query)
+    public static boolean deleteRow (String query)
     {
-        try {
+        try
+        {
+            Connection connection = DriverManager.getConnection(url, userName, password);
             PreparedStatement statement = connection.prepareStatement(query);
             return statement.executeUpdate() > 0;
         } catch (SQLException e)
@@ -94,6 +116,21 @@ public class DatabaseHandling
             return false;
         }
     }
+
+    public static boolean updateRow (String query)
+    {
+        try
+        {
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement statement = connection.prepareStatement(query);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
 
 }

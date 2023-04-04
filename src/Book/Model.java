@@ -1,338 +1,270 @@
 package Book;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Objects;
+import Database.DatabaseHandling;
 
+import java.sql.ResultSet;
+import java.util.ArrayList;
+
+
+/**
+ * This class is used to handle all database related tasks for book.
+ * It is used to get data from the database and to insert data into the database.
+ * It is also used to update and delete data from the database.
+ *
+ * @author Habib
+ * @version 1.0
+ * @since 2023-04-04
+ */
 public class Model
 {
-    private String title;
-    private String isbn;
-    private String author;
-    private String genre;
-    private String shortDescription;
-    private String bookFormat;
-    private boolean available;
-    private String bookImage;
-
-    public Model (String title, String isbn, String author, String genre, String shortDescription, String bookFormat,
-                  boolean available, String bookImage)
-    {
-        this.title = title;
-        this.isbn = isbn;
-        this.author = author;
-        this.genre = genre;
-        this.shortDescription = shortDescription;
-        this.bookFormat = bookFormat;
-        this.available = available;
-        this.bookImage = bookImage;
-    }
+    private Book book;
+    private DatabaseHandling db;
 
     public Model ()
     {
-        this.title = "";
-        this.isbn = "";
+        book = new Book();
     }
 
-    public String getTitle ()
+    public Model (Book book)
     {
-        return title;
+        this.book = book;
     }
 
-    public void setTitle (String title)
+    public void setBook (Book book)
     {
-        this.title = title;
+        this.book = book;
     }
 
-    public String getIsbn ()
+    public Book getBook ()
     {
-        return isbn;
+        return book;
     }
 
-    public void setIsbn (String isbn)
+    /**
+     * Returns a book object with the given bookID
+     *
+     * @param bookID the bookID of the book to be returned
+     * @return a book object with the given bookID
+     */
+    public Book getBook (String ISBN)
     {
-        this.isbn = isbn;
-    }
+        String query = "SELECT * FROM books WHERE isbn = " + ISBN;
+        ResultSet resultSet = DatabaseHandling.getRows(query);
 
-    public String getAuthor ()
-    {
-        return author;
-    }
-
-    public void setAuthor (String author)
-    {
-        this.author = author;
-    }
-
-    public String getGenre ()
-    {
-        return genre;
-    }
-
-    public void setGenre (String genre)
-    {
-        this.genre = genre;
-    }
-
-    public String getShortDescription ()
-    {
-        return shortDescription;
-    }
-
-    public void setShortDescription (String shortDescription)
-    {
-        this.shortDescription = shortDescription;
-    }
-
-    public String getBookFormat ()
-    {
-        return bookFormat;
-    }
-
-    public void setBookFormat (String bookFormat)
-    {
-        this.bookFormat = bookFormat;
-    }
-
-    public boolean isAvailable ()
-    {
-        return available;
-    }
-
-    public void setAvailable (boolean available)
-    {
-        this.available = available;
-    }
-
-    public String getBookImage ()
-    {
-        return bookImage;
-    }
-
-    public void setBookImage (String bookImage)
-    {
-        this.bookImage = bookImage;
-    }
-
-    public boolean addBook ()
-    {
+        // convert resultSet to Book object
         try
         {
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "");
-            PreparedStatement ps = conn.prepareStatement("INSERT INTO books VALUES (?,?,?,?,?,?,?,?)");
-
-            ps.setString(1, title);
-            ps.setString(2, isbn);
-            ps.setString(3, author);
-            ps.setString(4, genre);
-            ps.setString(5, shortDescription);
-            ps.setString(6, bookFormat);
-            ps.setBoolean(7, available);
-            ps.setString(8, bookImage);
-
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e)
-        {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public boolean editBook ()
-    {
-        try
-        {
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "");
-            PreparedStatement ps = conn.prepareStatement("UPDATE books SET title = ?, isbn = ?, author = ?, genre = ?, shortDescription = ?, bookFormat = ?, available = ?, bookImage = ? WHERE isbn = ?");
-            ps.setString(1, title);
-            ps.setString(2, isbn);
-            ps.setString(3, author);
-            ps.setString(4, genre);
-            ps.setString(5, shortDescription);
-            ps.setString(6, bookFormat);
-            ps.setBoolean(7, available);
-            ps.setString(8, bookImage);
-            ps.setString(9, isbn);
-
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e)
-        {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-
-    public static Book getBook (String isbn)
-    {
-        Book book = null;
-        try
-        {
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "");
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM books WHERE isbn = ?");
-            ps.setString(1, isbn);
-
-            ResultSet rs = ps.executeQuery();
-            if (rs.next())
+            while (true)
             {
-                book = new Book(rs.getString("title"), rs.getString("isbn"), rs.getString("author"), rs.getString(
-                        "genre"), rs.getString("shortDescription"), rs.getString("bookFormat"), rs.getBoolean("available"), rs.getString("bookImage"));
+                assert resultSet != null;
+                if (!resultSet.next()) break;
+                book.setTitle(resultSet.getString("title"));
+                book.setAuthor(resultSet.getString("author"));
+                book.setPublisher(resultSet.getString("publisher"));
+                book.setIsbn(resultSet.getString("isbn"));
+                book.setGenre(resultSet.getString("genre"));
+                book.setLanguage(resultSet.getString("language"));
+                book.setDescription(resultSet.getString("description"));
+                book.setPublicationDate(resultSet.getString("publicationDate"));
+                book.setEdition(resultSet.getString("edition"));
+                book.setNumberOfPages(resultSet.getString("numberOfPages"));
+                book.setNumberOfCopies(resultSet.getString("numberOfCopies"));
+                book.setNumberOfAvailableCopies(resultSet.getString("numberOfAvailableCopies"));
+                book.setBookID(resultSet.getString("bookID"));
             }
-
-        } catch (SQLException e)
+        } catch (Exception e)
         {
-            e.printStackTrace();
-            return null;
+            System.out.println(e);
         }
         return book;
     }
 
-    public static ArrayList<Book> getAllBooks ()
+    /**
+     * Returns an ArrayList of all the books in the database
+     *
+     * @return an ArrayList of all the books in the database, if no book found returns an empty ArrayList
+     */
+    public ArrayList<Book> getBooks ()
     {
         ArrayList<Book> books = new ArrayList<>();
+        String query = "SELECT * FROM books";
+        ResultSet resultSet = DatabaseHandling.getRows(query);
+
         try
         {
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "");
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM books");
-
-            ResultSet rs = ps.executeQuery();
-            while (rs.next())
+            while (resultSet.next())
             {
-                books.add(new Book(rs.getString("title"), rs.getString("isbn"), rs.getString("author"), rs.getString(
-                        "genre"), rs.getString("shortDescription"), rs.getString("bookFormat"), rs.getBoolean("available"), rs.getString("bookImage")));
+                Book book = new Book();
+                book.setTitle(resultSet.getString("title"));
+                book.setAuthor(resultSet.getString("author"));
+                book.setPublisher(resultSet.getString("publisher"));
+                book.setIsbn(resultSet.getString("isbn"));
+                book.setGenre(resultSet.getString("genre"));
+                book.setLanguage(resultSet.getString("language"));
+                book.setDescription(resultSet.getString("description"));
+                book.setPublicationDate(resultSet.getString("publicationDate"));
+                book.setEdition(resultSet.getString("edition"));
+                book.setNumberOfPages(resultSet.getString("numberOfPages"));
+                book.setNumberOfCopies(resultSet.getString("numberOfCopies"));
+                book.setNumberOfAvailableCopies(resultSet.getString("numberOfAvailableCopies"));
+                book.setBookID(resultSet.getString("bookID"));
+                books.add(book);
             }
-
-        } catch (SQLException e)
+        } catch (Exception e)
         {
-            e.printStackTrace();
-            return null;
+            System.out.println(e);
         }
         return books;
     }
 
-    public static ArrayList<Book> searchBooks (String searchPhrase)
+    /**
+     * Add the book object to the database
+     *
+     * @param newBook the book object to be added to the database
+     * @return Returns true if the book was added successfully, false otherwise
+     */
+    private boolean addBookQuery (Book newBook)
     {
-        ArrayList<Book> books = new ArrayList<>();
+        String query = "INSERT INTO books (title, author, publisher, isbn, genre, language, description, publicationDate, edition, numberOfPages, numberOfCopies, numberOfAvailableCopies, bookID) VALUES ('" + book.getTitle() + "', '" + book.getAuthor() + "', '" + book.getPublisher() + "', '" + book.getIsbn() + "', '" + book.getGenre() + "', '" + book.getLanguage() + "', '" + book.getDescription() + "', '" + book.getPublicationDate() + "', '" + book.getEdition() + "', '" + book.getNumberOfPages() + "', '" + book.getNumberOfCopies() + "', '" + book.getNumberOfAvailableCopies() + "', '" + book.getBookID() + "')";
+        return DatabaseHandling.insertNewRow(query);
+    }
+
+    /**
+     * Add the book object to the database
+     *
+     * @return Returns true if the book was added successfully, false otherwise
+     */
+    public boolean addBook ()
+    {
+        return addBookQuery(book);
+    }
+
+    /**
+     * Add the book object to the database
+     *
+     * @param newBook the book object to be added to the database
+     * @return Returns true if the book was added successfully, false otherwise
+     */
+    public boolean addBook (Book newBook)
+    {
+        return addBookQuery(newBook);
+    }
+
+    public boolean addBook (String title, String author, String publisher, String isbn, String genre, String language, String description, String publicationDate, String edition, String numberOfPages, String numberOfCopies, String numberOfAvailableCopies, String bookID)
+    {
+        Book newBook = new Book(title, author, publisher, isbn, genre, language, description, publicationDate, edition, numberOfPages, numberOfCopies, numberOfAvailableCopies, bookID);
+        return addBookQuery(newBook);
+    }
+
+    /**
+     * Update an existing book in the database
+     *
+     * @param ISBN       the ISBN of the book to be updated
+     * @param editedBook the book object with the updated information
+     * @return Returns true if the book was updated successfully, false otherwise
+     */
+    public boolean updateBook (String ISBN, Book editedBook)
+    {
+        String query =
+                "UPDATE books SET title = '" + editedBook.getTitle() + "', author = '" + editedBook.getAuthor() + "'," +
+                        " publisher = '" + editedBook.getPublisher() + "', isbn = '" + editedBook.getIsbn() + "', genre = '" + editedBook.getGenre() + "', language = '" + editedBook.getLanguage() + "', description = '" + editedBook.getDescription() + "', publicationDate = '" + editedBook.getPublicationDate() + "', edition = '" + editedBook.getEdition() + "', numberOfPages = '" + editedBook.getNumberOfPages() + "', numberOfCopies = '" + editedBook.getNumberOfCopies() + "', numberOfAvailableCopies = '" + editedBook.getNumberOfAvailableCopies() + "', bookID = '" + editedBook.getBookID() + "' WHERE isbn = '" + ISBN + "'";
+        return DatabaseHandling.updateRow(query);
+    }
+
+    public boolean updateBook (Book editedBook)
+    {
+        return updateBook(book.getIsbn(), editedBook);
+    }
+
+    public boolean updateBook (String ISBN)
+    {
+        Book newBook = getBook(ISBN);
+        return updateBook(ISBN, newBook);
+    }
+
+    /**
+     * Delete a book from the database
+     *
+     * @param ISBN the ISBN of the book to be deleted
+     * @return Returns true if the book was deleted successfully, false otherwise
+     */
+    public boolean deleteBook (String ISBN)
+    {
+        String query = "DELETE FROM books WHERE isbn = '" + ISBN + "'";
+        return DatabaseHandling.deleteRow(query);
+    }
+
+    /**
+     * Delete a book from the database
+     *
+     * @return Returns true if the book was deleted successfully, false otherwise
+     */
+    public boolean deleteBook ()
+    {
+        return deleteBook(book.getIsbn());
+    }
+
+    /**
+     * Delete a book from the database
+     *
+     * @param newBook the book object to be deleted
+     * @return Returns true if the book was deleted successfully, false otherwise
+     */
+    public boolean deleteBook (Book newBook)
+    {
+        return deleteBook(newBook.getIsbn());
+    }
+
+
+    /**
+     * Checks if a book is available in the library to be borrowed
+     *
+     * @param ISBN the ISBN of the book to be checked
+     * @return Returns true if the book is available, false otherwise
+     */
+    public boolean isBookAvailable (String ISBN)
+    {
+        String query = "SELECT numberOfAvailableCopies FROM books WHERE isbn = '" + ISBN + "'";
+        ResultSet resultSet = DatabaseHandling.getRows(query);
         try
         {
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "");
-
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM books WHERE title LIKE ? OR isbn LIKE ? OR author LIKE ? OR genre LIKE ? OR shortDescription LIKE ? OR bookFormat LIKE ?");
-
-            ps.setString(1, "%" + searchPhrase + "%");
-            ps.setString(2, "%" + searchPhrase + "%");
-            ps.setString(3, "%" + searchPhrase + "%");
-            ps.setString(4, "%" + searchPhrase + "%");
-            ps.setString(5, "%" + searchPhrase + "%");
-            ps.setString(6, "%" + searchPhrase + "%");
-
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next())
+            while (true)
             {
-                books.add(new Book(rs.getString("title"), rs.getString("isbn"), rs.getString("author"), rs.getString(
-                        "genre"), rs.getString("shortDescription"), rs.getString("bookFormat"), rs.getBoolean(
-                        "availability"),
-                        rs.getString("bookImage")));
+                assert resultSet != null;
+                if (!resultSet.next()) break;
+                if (resultSet.getInt("numberOfAvailableCopies") > 0)
+                {
+                    return true;
+                }
             }
-
-        } catch (SQLException e)
+        } catch (Exception e)
         {
-            e.printStackTrace();
-            return null;
+            System.out.println(e);
         }
-        return books;
+        return false;
     }
 
-    public boolean returnBook ()
+
+    /**
+     * Checks if a book is available in the library to be borrowed
+     *
+     * @return Returns true if the book is available, false otherwise
+     */
+    public boolean isBookAvailable ()
     {
-        try
-        {
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "");
-
-            PreparedStatement ps = conn.prepareStatement("UPDATE books SET availability = ? WHERE isbn = ?");
-
-            ps.setBoolean(1, true);
-            ps.setString(2, isbn);
-
-            return ps.executeUpdate() > 0;
-
-        } catch (SQLException e)
-        {
-            e.printStackTrace();
-            return false;
-        }
+        return isBookAvailable(book.getIsbn());
     }
 
-
-    public boolean borrowBook ()
+    /**
+     * Checks if a book is available in the library to be borrowed
+     *
+     * @param newBook the book object to be checked
+     * @return Returns true if the book is available, false otherwise
+     */
+    public boolean isBookAvailable (Book newBook)
     {
-        try
-        {
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "");
-
-            PreparedStatement ps = conn.prepareStatement("UPDATE books SET availability = ? WHERE isbn = ?");
-            ps.setBoolean(1, false);
-            ps.setString(2, isbn);
-
-            return ps.executeUpdate() > 0;
-
-        } catch (SQLException e)
-        {
-            e.printStackTrace();
-            return false;
-        }
+        return isBookAvailable(newBook.getIsbn());
     }
 
-    @Override
-    public boolean equals (Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
 
-        Model model = (Model) o;
-
-        if (available != model.available) return false;
-        if (!Objects.equals(title, model.title)) return false;
-        if (!Objects.equals(isbn, model.isbn)) return false;
-        if (!Objects.equals(author, model.author)) return false;
-        if (!Objects.equals(genre, model.genre)) return false;
-        if (!Objects.equals(shortDescription, model.shortDescription))
-            return false;
-        if (!Objects.equals(bookFormat, model.bookFormat)) return false;
-        return Objects.equals(bookImage, model.bookImage);
-    }
-
-    @Override
-    public int hashCode ()
-    {
-        int result = title != null ? title.hashCode() : 0;
-        result = 31 * result + (isbn != null ? isbn.hashCode() : 0);
-        result = 31 * result + (author != null ? author.hashCode() : 0);
-        result = 31 * result + (genre != null ? genre.hashCode() : 0);
-        result = 31 * result + (shortDescription != null ? shortDescription.hashCode() : 0);
-        result = 31 * result + (bookFormat != null ? bookFormat.hashCode() : 0);
-        result = 31 * result + (available ? 1 : 0);
-        result = 31 * result + (bookImage != null ? bookImage.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString ()
-    {
-        return "Model{" +
-                "title='" + title + '\'' +
-                ", isbn='" + isbn + '\'' +
-                ", author='" + author + '\'' +
-                ", genre='" + genre + '\'' +
-                ", shortDescription='" + shortDescription + '\'' +
-                ", bookFormat='" + bookFormat + '\'' +
-                ", available=" + available +
-                ", bookImage='" + bookImage + '\'' +
-                '}';
-    }
 }

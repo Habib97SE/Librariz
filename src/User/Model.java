@@ -45,6 +45,21 @@ public class Model
 
     public boolean addUser ()
     {
+        user.setIdentifierNumber(getLastIdentifierNumber() + 1);
+        // print out all the values of the user object
+        System.out.println(user.getFirstName());
+        System.out.println(user.getLastName());
+        System.out.println(user.getEmailAddress());
+        System.out.println(user.getPhoneNumber());
+        System.out.println(user.getHomeAddress());
+        System.out.println(user.getZipCode());
+        System.out.println(user.getCity());
+        System.out.println(user.getIdentifierNumber());
+        System.out.println(user.getCurrentFine());
+        System.out.println(user.getPassword());
+        System.out.println(user.getUserType());
+        System.out.println(user.getPersonalNumber());
+
         String query = "INSERT INTO users (firstName, lastName, emailAddress, phoneNumber, homeAddress, zipCode, city, identifierNumber, currentFine, password, userType, personalNumber) VALUES ('" + user.getFirstName() + "', '" + user.getLastName() + "', '" + user.getEmailAddress() + "', '" + user.getPhoneNumber() + "', '" + user.getHomeAddress() + "', '" + user.getZipCode() + "', '" + user.getCity() + "', '" + user.getIdentifierNumber() + "', '" + user.getCurrentFine() + "', '" + user.getPassword() + "', '" + user.getUserType() + "', '" + user.getPersonalNumber() + "')";
         return DatabaseHandling.insertNewRow(query);
     }
@@ -73,7 +88,7 @@ public class Model
                 return new User(rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAddress"),
                         rs.getString("phoneNumber"), rs.getString("homeAddress"), rs.getString("zipCode"),
                         rs.getString("city"), rs.getString("identifierNumber"), rs.getDouble("currentFine"), rs.getString(
-                                "password"), rs.getString("userType"), rs.getString("personalNumber"));
+                        "password"), rs.getString("userType"), Database.SecureData.decrypt(rs.getString("personalNumber")));
             } else
             {
                 return null;
@@ -82,6 +97,9 @@ public class Model
         {
             e.printStackTrace();
             return null;
+        } catch (Exception e)
+        {
+            throw new RuntimeException(e);
         }
     }
 
@@ -98,7 +116,7 @@ public class Model
                 users.add(new User(rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAddress"),
                         rs.getString("phoneNumber"), rs.getString("homeAddress"), rs.getString("zipCode"),
                         rs.getString("city"), rs.getString("identifierNumber"), rs.getDouble("currentFine"), rs.getString(
-                                "password"), rs.getString("userType"), rs.getString("personalNumber")));
+                        "password"), rs.getString("userType"), rs.getString("personalNumber")));
             }
             return users;
         } catch (SQLException e)
@@ -108,7 +126,7 @@ public class Model
         }
     }
 
-    public ArrayList<User> getAllUsers(String userType)
+    public ArrayList<User> getAllUsers (String userType)
     {
         ArrayList<User> users = new ArrayList<>();
         try
@@ -121,7 +139,7 @@ public class Model
                 users.add(new User(rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAddress"),
                         rs.getString("phoneNumber"), rs.getString("homeAddress"), rs.getString("zipCode"),
                         rs.getString("city"), rs.getString("identifierNumber"), rs.getDouble("currentFine"), rs.getString(
-                                "password"), rs.getString("userType"), rs.getString("personalNumber")));
+                        "password"), rs.getString("userType"), rs.getString("personalNumber")));
             }
             return users;
         } catch (SQLException e)
@@ -131,5 +149,26 @@ public class Model
         }
     }
 
+    public boolean checkIfUserExists (String personalNumber)
+    {
+        try
+        {
+            String query = "SELECT * FROM users WHERE personalNumber = '" + personalNumber + "'";
+            ResultSet rs = DatabaseHandling.getRow(query);
+            assert rs != null;
+            // if user exists return true else return false
+            return rs.next();
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public String getLastIdentifierNumber ()
+    {
+        String query = "SELECT identifierNumber FROM users ORDER BY identifierNumber DESC LIMIT 1";
+        return DatabaseHandling.getSingleValue(query, "identifierNumber");
+    }
 
 }
