@@ -199,6 +199,10 @@ public class View
         }
     }
 
+    /**
+     * Adds a new user to the database and displays a message if the user was successfully added or not to the database
+     *
+     */
     public void addUser ()
     {
         JFrame frame = new JFrame("Add user");

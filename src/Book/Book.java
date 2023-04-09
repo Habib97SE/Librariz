@@ -1,4 +1,5 @@
 package Book;
+
 public class Book
 {
     private String title;
@@ -44,7 +45,7 @@ public class Book
         this.numberOfPages = "";
         this.numberOfCopies = "";
         this.numberOfAvailableCopies = "";
-        this.bookID = "";
+
     }
 
     public Book (Book other)
@@ -61,7 +62,6 @@ public class Book
         this.numberOfPages = other.numberOfPages;
         this.numberOfCopies = other.numberOfCopies;
         this.numberOfAvailableCopies = other.numberOfAvailableCopies;
-        this.bookID = other.bookID;
     }
 
     public String getTitle ()
@@ -184,19 +184,10 @@ public class Book
         this.numberOfAvailableCopies = numberOfAvailableCopies;
     }
 
-    public String getBookID ()
-    {
-        return bookID;
-    }
-
-    public void setBookID (String bookID)
-    {
-        this.bookID = bookID;
-    }
 
     public boolean equals (Book other)
     {
-        return this.getBookID().equals(other.getBookID());
+        return this.getIsbn().equals(other.getIsbn());
     }
 
     public boolean equals (String isbn)
@@ -207,6 +198,6 @@ public class Book
     @Override
     public String toString ()
     {
-        return "Title: " + title + " Author: " + author + " Publisher: " + publisher + " ISBN: " + isbn + " Genre: " + genre + " Language: " + language + " Description: " + description + " Publication Date: " + publicationDate + " Edition: " + edition + " Number of Pages: " + numberOfPages + " Number of Copies: " + numberOfCopies + " Number of Available Copies: " + numberOfAvailableCopies + " Book ID: " + bookID;
+        return "Title: " + title + " Author: " + author + " Publisher: " + publisher + " ISBN: " + isbn + " Genre: " + genre + " Language: " + language + " Description: " + description + " Publication Date: " + publicationDate + " Edition: " + edition + " Number of Pages: " + numberOfPages + " Number of Copies: " + numberOfCopies + " Number of Available Copies: " + numberOfAvailableCopies;
     }
 }

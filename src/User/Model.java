@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import Database.DatabaseHandling;
+import Database.SecureData;
 
 
 // this class is the model for the user class
@@ -45,20 +46,8 @@ public class Model
 
     public boolean addUser ()
     {
-        user.setIdentifierNumber(getLastIdentifierNumber() + 1);
+        user.setIdentifierNumber(createIdentifierNumber());
         // print out all the values of the user object
-        System.out.println(user.getFirstName());
-        System.out.println(user.getLastName());
-        System.out.println(user.getEmailAddress());
-        System.out.println(user.getPhoneNumber());
-        System.out.println(user.getHomeAddress());
-        System.out.println(user.getZipCode());
-        System.out.println(user.getCity());
-        System.out.println(user.getIdentifierNumber());
-        System.out.println(user.getCurrentFine());
-        System.out.println(user.getPassword());
-        System.out.println(user.getUserType());
-        System.out.println(user.getPersonalNumber());
 
         String query = "INSERT INTO users (firstName, lastName, emailAddress, phoneNumber, homeAddress, zipCode, city, identifierNumber, currentFine, password, userType, personalNumber) VALUES ('" + user.getFirstName() + "', '" + user.getLastName() + "', '" + user.getEmailAddress() + "', '" + user.getPhoneNumber() + "', '" + user.getHomeAddress() + "', '" + user.getZipCode() + "', '" + user.getCity() + "', '" + user.getIdentifierNumber() + "', '" + user.getCurrentFine() + "', '" + user.getPassword() + "', '" + user.getUserType() + "', '" + user.getPersonalNumber() + "')";
         return DatabaseHandling.insertNewRow(query);
@@ -76,8 +65,10 @@ public class Model
         return DatabaseHandling.insertNewRow(query);
     }
 
-    public User getUser (String personalNumber)
+    public User getUser (String personalNumber) throws Exception
     {
+        personalNumber = SecureData.encrypt(personalNumber);
+        System.out.println(SecureData.decrypt("wvRHq0NsgC/h1X6rtk9noRALZQuJjxZtfMKYs3Cy44I="));
         try
         {
             String query = "SELECT * FROM users WHERE personalNumber = '" + personalNumber + "'";
@@ -85,10 +76,7 @@ public class Model
             assert rs != null;
             if (rs.next())
             {
-                return new User(rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAddress"),
-                        rs.getString("phoneNumber"), rs.getString("homeAddress"), rs.getString("zipCode"),
-                        rs.getString("city"), rs.getString("identifierNumber"), rs.getDouble("currentFine"), rs.getString(
-                        "password"), rs.getString("userType"), Database.SecureData.decrypt(rs.getString("personalNumber")));
+                return new User(rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAddress"), rs.getString("phoneNumber"), rs.getString("homeAddress"), rs.getString("zipCode"), rs.getString("city"), rs.getString("identifierNumber"), rs.getDouble("currentFine"), rs.getString("password"), rs.getString("userType"), Database.SecureData.decrypt(rs.getString("personalNumber")));
             } else
             {
                 return null;
@@ -113,10 +101,7 @@ public class Model
             assert rs != null;
             while (rs.next())
             {
-                users.add(new User(rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAddress"),
-                        rs.getString("phoneNumber"), rs.getString("homeAddress"), rs.getString("zipCode"),
-                        rs.getString("city"), rs.getString("identifierNumber"), rs.getDouble("currentFine"), rs.getString(
-                        "password"), rs.getString("userType"), rs.getString("personalNumber")));
+                users.add(new User(rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAddress"), rs.getString("phoneNumber"), rs.getString("homeAddress"), rs.getString("zipCode"), rs.getString("city"), rs.getString("identifierNumber"), rs.getDouble("currentFine"), rs.getString("password"), rs.getString("userType"), rs.getString("personalNumber")));
             }
             return users;
         } catch (SQLException e)
@@ -136,10 +121,7 @@ public class Model
             assert rs != null;
             while (rs.next())
             {
-                users.add(new User(rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAddress"),
-                        rs.getString("phoneNumber"), rs.getString("homeAddress"), rs.getString("zipCode"),
-                        rs.getString("city"), rs.getString("identifierNumber"), rs.getDouble("currentFine"), rs.getString(
-                        "password"), rs.getString("userType"), rs.getString("personalNumber")));
+                users.add(new User(rs.getString("firstName"), rs.getString("lastName"), rs.getString("emailAddress"), rs.getString("phoneNumber"), rs.getString("homeAddress"), rs.getString("zipCode"), rs.getString("city"), rs.getString("identifierNumber"), rs.getDouble("currentFine"), rs.getString("password"), rs.getString("userType"), rs.getString("personalNumber")));
             }
             return users;
         } catch (SQLException e)
@@ -165,10 +147,29 @@ public class Model
         }
     }
 
-    public String getLastIdentifierNumber ()
+    /**
+     * This method is used to get the last identifier number from the database
+     *
+     * @param personalNumber the personal number of the user
+     * @return the last identifier number
+     */
+    private String getYear (String personalNumber)
     {
-        String query = "SELECT identifierNumber FROM users ORDER BY identifierNumber DESC LIMIT 1";
-        return DatabaseHandling.getSingleValue(query, "identifierNumber");
+        if (personalNumber.startsWith("19") || personalNumber.startsWith("20"))
+        {
+            return personalNumber.substring(2, 4);
+        }
+        return personalNumber.substring(0, 2);
+    }
+
+    public String createIdentifierNumber ()
+    {
+        // 3 char first name + 3 char last name + birthyear in YY format
+        String identifierNumber = "";
+        identifierNumber += user.getFirstName().substring(0, 3);
+        identifierNumber += user.getLastName().substring(0, 3);
+        identifierNumber += getYear(user.getPersonalNumber());
+        return identifierNumber;
     }
 
 }

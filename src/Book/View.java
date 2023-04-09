@@ -3,57 +3,59 @@ package Book;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class View
 {
-    private Controller controller;
+    private final Controller controller;
 
+    public View ()
+    {
+        controller = new Controller();
+    }
 
     /**
      * This method is used to add a book to the database
      */
     public void findBook ()
     {
-        String isbn = JOptionPane.showInputDialog("Enter the ISBN of the book you want to find");
-        Book book = controller.getBook(isbn);
+        Book book = null;
+        while (true)
+        {
+            String isbn = JOptionPane.showInputDialog("Enter the ISBN of the book you want to find");
+            book = controller.getBook(isbn);
 
-        // set the book variable to the book object returned by the controller
+            if (Objects.equals(book.getIsbn(), ""))
+            {
+                int choice = JOptionPane.showConfirmDialog(null, "Book not found. Do you want to try again?", "Book not found", JOptionPane.YES_NO_OPTION);
+                if (choice == JOptionPane.NO_OPTION) break;
+            } else {
+                viewBook(book);
+                break;
+            }
+        }
 
-        // display the book object in the GUI
+        // view book in the GUI
 
+
+    }
+
+    public void viewBook (Book book)
+    {
         JFrame frame = new JFrame("View Book");
 
-        JPanel panel = new JPanel();
+        frame.setSize(800, 600);
 
-        JLabel title = new JLabel("Title: " + book.getTitle());
-        JLabel author = new JLabel("Author: " + book.getAuthor());
-        JLabel publisher = new JLabel("Publisher: " + book.getPublisher());
-        JLabel isbnLabel = new JLabel("ISBN: " + book.getIsbn());
-        JLabel genre = new JLabel("Genre: " + book.getGenre());
-        JLabel language = new JLabel("Language: " + book.getLanguage());
-        JLabel description = new JLabel("Description: " + book.getDescription());
-        JLabel publicationDate = new JLabel("Publication Date: " + book.getPublicationDate());
-        JLabel edition = new JLabel("Edition: " + book.getEdition());
-        JLabel numberOfPages = new JLabel("Number of Pages: " + book.getNumberOfPages());
-        JLabel numberOfCopies = new JLabel("Number of Copies: " + book.getNumberOfCopies());
-        JLabel numberOfAvailableCopies = new JLabel("Number of Available Copies: " + book.getNumberOfAvailableCopies());
+        // create table with two columns, one for the attribute name and the other for the attribute value
+        String[] columnNames = {"Attribute", "Value"};
+        String[][] data = {{"Title", book.getTitle()}, {"Author", book.getAuthor()}, {"Publisher", book.getPublisher()}, {"ISBN", book.getIsbn()}, {"Genre", book.getGenre()}, {"Language", book.getLanguage()}, {"Description", book.getDescription()}, {"Publication Date", book.getPublicationDate()}, {"Edition", book.getEdition()}, {"Number of Pages", book.getNumberOfPages()}, {"Number of Copies", book.getNumberOfCopies()}, {"Number of Available Copies", book.getNumberOfAvailableCopies()}};
+        JTable table = new JTable(data, columnNames);
+        JScrollPane scrollPane = new JScrollPane(table);
+        frame.add(scrollPane);
 
-        panel.add(title);
-        panel.add(author);
-        panel.add(publisher);
-        panel.add(isbnLabel);
-        panel.add(genre);
-        panel.add(language);
-        panel.add(description);
-        panel.add(publicationDate);
-        panel.add(edition);
-        panel.add(numberOfPages);
-        panel.add(numberOfCopies);
-        panel.add(numberOfAvailableCopies);
 
-        frame.add(panel);
-
+        frame.setVisible(true);
     }
 
     /**
@@ -65,7 +67,10 @@ public class View
 
         // display the books in the GUI
 
+
         JFrame frame = new JFrame("View All Books");
+
+        frame.setSize(800, 600);
 
         JPanel panel = new JPanel();
 
@@ -101,6 +106,8 @@ public class View
         panel.add(scrollPane);
 
         frame.add(panel);
+
+        frame.setVisible(true);
     }
 
     /**
@@ -109,6 +116,8 @@ public class View
     public void addBook ()
     {
         JFrame frame = new JFrame("Add Book");
+
+        frame.setSize(800, 600);
 
         JPanel panel = new JPanel();
 
@@ -169,6 +178,8 @@ public class View
 
         frame.add(panel);
 
+        frame.setVisible(true);
+
         // add the book to the database using the controller and display a message to the user that the book was
         // added successfully
         addBookButton.addActionListener(e ->
@@ -191,6 +202,8 @@ public class View
     {
         JFrame frame = new JFrame("Delete Book");
 
+        frame.setSize(800, 600);
+
         JPanel panel = new JPanel();
 
         JLabel isbnLabel = new JLabel("ISBN: ");
@@ -205,6 +218,7 @@ public class View
         panel.add(cancel);
 
         frame.add(panel);
+        frame.setVisible(true);
 
         // delete the book from the database using the controller and display a message to the user that the book was
         // deleted successfully
@@ -226,6 +240,8 @@ public class View
     public void updateBook ()
     {
         JFrame frame = new JFrame("Update Book");
+
+        frame.setSize(800, 600);
 
         JPanel panel = new JPanel();
 
@@ -257,6 +273,7 @@ public class View
                 JOptionPane.showMessageDialog(null, "Book not updated");
             }
         });
+        frame.setVisible(true);
 
         cancel.addActionListener(e ->
         {
@@ -269,34 +286,33 @@ public class View
      */
     public void searchBook ()
     {
+        String searchPhrase = JOptionPane.showInputDialog("Enter the search phrase: ");
+        ArrayList<Book> books = controller.searchBook(searchPhrase);
         JFrame frame = new JFrame("Search Book");
-
         JPanel panel = new JPanel();
-
-        JLabel isbnLabel = new JLabel("ISBN: ");
-        JTextField isbn = new JTextField(20);
-
-        JButton searchBookButton = new JButton("Search Book");
-        JButton cancel = new JButton("Cancel");
-
-        panel.add(isbnLabel);
-        panel.add(isbn);
-        panel.add(searchBookButton);
-        panel.add(cancel);
-
+        frame.setSize(800, 600);
+        String[] columnNames = {"Title", "Author", "Publisher", "ISBN", "Genre", "Language", "Description", "Publication Date", "Edition", "Number of Pages", "Number of Copies", "Number of Available Copies"};
+        Object[][] data = new Object[books.size()][12];
+        for (int i = 0; i < books.size(); i++)
+        {
+            data[i][0] = books.get(i).getTitle();
+            data[i][1] = books.get(i).getAuthor();
+            data[i][2] = books.get(i).getPublisher();
+            data[i][3] = books.get(i).getIsbn();
+            data[i][4] = books.get(i).getGenre();
+            data[i][5] = books.get(i).getLanguage();
+            data[i][6] = books.get(i).getDescription();
+            data[i][7] = books.get(i).getPublicationDate();
+            data[i][8] = books.get(i).getEdition();
+            data[i][9] = books.get(i).getNumberOfPages();
+            data[i][10] = books.get(i).getNumberOfCopies();
+            data[i][11] = books.get(i).getNumberOfAvailableCopies();
+        }
+        JTable table = new JTable(data, columnNames);
+        JScrollPane scrollPane = new JScrollPane(table);
+        frame.add(scrollPane);
         frame.add(panel);
+        frame.setVisible(true);
 
-        // search for the book in the database using the controller and display a message to the user that the book was
-        // found successfully
-        searchBookButton.addActionListener(e ->
-        {
-            controller.searchBook(isbn.getText());
-            JOptionPane.showMessageDialog(null, "Book found successfully");
-        });
-
-        cancel.addActionListener(e ->
-        {
-            frame.dispose();
-        });
     }
 }

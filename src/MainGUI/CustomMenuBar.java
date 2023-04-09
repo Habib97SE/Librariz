@@ -6,31 +6,134 @@ import java.awt.event.*;
 import Database.DatabaseHandling;
 import Database.SecureData;
 
+
+/**
+ * CustomMenuBar class is used to create a menu bar with menus and menu items and add action listeners to the menu
+ * items to handle the actions.
+ *
+ * @author : Habib
+ * @version : 1.0.0
+ * @since : 07/04/2023, Fri
+ */
 public class CustomMenuBar extends JMenuBar
 {
-    public CustomMenuBar ()
+
+    /*
+     * Create a menu bar with menus and menu items
+     * @param menuBarName : name of the menu bar
+     * @param menuNames : array of menu names
+     * @param menuItems : array of menu items
+     * @return JMenuBar : return the menu bar with menus and menu items
+     */
+    public JMenuBar createMenuBar (String menuBarName, String[] menuNames, String[][] menuItems)
     {
-        // create the menu bar and return it
-        JMenu fileMenu = new JMenu("File");
-        JMenu editMenu = new JMenu("Edit");
-        JMenu helpMenu = new JMenu("Help");
-
-        JMenuItem exitMenuItem = new JMenuItem("Exit");
-        JMenuItem aboutMenuItem = new JMenuItem("About");
-
-        fileMenu.add(exitMenuItem);
-        helpMenu.add(aboutMenuItem);
-        editMenu.add(new JMenuItem("Edit"));
-
         JMenuBar menuBar = new JMenuBar();
+        for (int i = 0; i < menuNames.length; i++)
+        {
+            menuBar.add(createMenu(menuNames[i], menuItems[i]));
+        }
+        return menuBar;
+    }
 
-        // add the menu bar to the frame
-        menuBar.add(fileMenu);
-        menuBar.add(editMenu);
-        menuBar.add(helpMenu);
+    /**
+     * Create a menu with menu items and add action listeners to the menu items to handle the actions
+     *
+     * @param menuName  : name of the menu to be created
+     * @param menuItems : array of menu items to be added to the menu
+     * @return JMenu : return the menu with menu items
+     */
+    public JMenu createMenu (String menuName, String[] menuItems)
+    {
+        JMenu menu = new JMenu(menuName);
+        for (String menuItem : menuItems)
+        {
+            menu.add(createMenuItem(menuItem));
+        }
+        return menu;
+    }
 
+    /**
+     * Create a menu item and add action listener to the menu item to handle the action
+     *
+     * @param menuItemName : name of the menu item to be created
+     * @return JMenuItem : return the menu item with added action listener
+     */
+    public JMenuItem createMenuItem (String menuItemName)
+    {
+        // add action listener
+        JMenuItem menuItem = new JMenuItem(menuItemName);
+        menuItem.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed (ActionEvent e)
+            {
+                try
+                {
+                    handleMenuItemAction(menuItem);
+                } catch (Exception exception)
+                {
+                    exception.printStackTrace();
+                }
+            }
+        });
+        return menuItem; // return the menuItem with added ActionListener
+    }
 
+    /**
+     * Handle the action of the menu item
+     *
+     * @param menuItem : menu item whose action is to be handled
+     * @throws Exception : throw exception if any
+     */
+    public void handleMenuItemAction (JMenuItem menuItem) throws Exception
+    {
+        String menuItemName = menuItem.getText();
+        User.View userView = new User.View();
+        Book.View bookView = new Book.View();
+        switch (menuItemName)
+        {
+            case "Add new user":
+                // Call method to add new user
+                // call method in User.View
 
-
+                userView.addUser();
+                break;
+            case "Delete user":
+                // Call method to delete user
+                userView.deleteUser();
+                break;
+            case "Edit user":
+                userView.editUser();
+            case "Show user":
+                userView.showUser();
+                break;
+            case "Show users":
+                // Call method to show users
+                userView.showUsers();
+                break;
+            case "Find book":
+                // Call method to find book
+                bookView.findBook();
+                break;
+            case "Add new book":
+                // Call method to add new book
+                bookView.addBook();
+                break;
+            case "Edit book":
+                // Call method to edit book
+                bookView.updateBook();
+                break;
+            case "Delete book":
+                // Call method to delete book
+                bookView.deleteBook();
+                break;
+            case "Show books":
+                // Call method to show books
+                bookView.viewAllBooks();
+                break;
+            default:
+                JOptionPane.showMessageDialog(null, "Invalid menu item", "Error", JOptionPane.ERROR_MESSAGE);
+                break;
+        }
     }
 }

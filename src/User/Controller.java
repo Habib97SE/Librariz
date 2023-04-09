@@ -121,8 +121,8 @@ public class Controller
     private String generateIdentifiersNumber ()
     {
         // get the last identifier number from the database
-        String lastIdentifierNumber = model.getLastIdentifierNumber();
-        String lastLibraryIdentifierNumber = model.getLastIdentifierNumber();
+        String lastIdentifierNumber = model.createIdentifierNumber();
+        String lastLibraryIdentifierNumber = model.createIdentifierNumber();
         if (lastLibraryIdentifierNumber == null)
         {
             return "0000000000000000";

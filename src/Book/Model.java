@@ -43,7 +43,7 @@ public class Model
     /**
      * Returns a book object with the given bookID
      *
-     * @param bookID the bookID of the book to be returned
+     * @param ISBN the bookID of the book to be returned
      * @return a book object with the given bookID
      */
     public Book getBook (String ISBN)
@@ -56,7 +56,7 @@ public class Model
         {
             while (true)
             {
-                assert resultSet != null;
+                if (resultSet == null) return null;
                 if (!resultSet.next()) break;
                 book.setTitle(resultSet.getString("title"));
                 book.setAuthor(resultSet.getString("author"));
@@ -70,7 +70,7 @@ public class Model
                 book.setNumberOfPages(resultSet.getString("numberOfPages"));
                 book.setNumberOfCopies(resultSet.getString("numberOfCopies"));
                 book.setNumberOfAvailableCopies(resultSet.getString("numberOfAvailableCopies"));
-                book.setBookID(resultSet.getString("bookID"));
+
             }
         } catch (Exception e)
         {
@@ -107,7 +107,7 @@ public class Model
                 book.setNumberOfPages(resultSet.getString("numberOfPages"));
                 book.setNumberOfCopies(resultSet.getString("numberOfCopies"));
                 book.setNumberOfAvailableCopies(resultSet.getString("numberOfAvailableCopies"));
-                book.setBookID(resultSet.getString("bookID"));
+
                 books.add(book);
             }
         } catch (Exception e)
@@ -125,7 +125,12 @@ public class Model
      */
     private boolean addBookQuery (Book newBook)
     {
-        String query = "INSERT INTO books (title, author, publisher, isbn, genre, language, description, publicationDate, edition, numberOfPages, numberOfCopies, numberOfAvailableCopies, bookID) VALUES ('" + book.getTitle() + "', '" + book.getAuthor() + "', '" + book.getPublisher() + "', '" + book.getIsbn() + "', '" + book.getGenre() + "', '" + book.getLanguage() + "', '" + book.getDescription() + "', '" + book.getPublicationDate() + "', '" + book.getEdition() + "', '" + book.getNumberOfPages() + "', '" + book.getNumberOfCopies() + "', '" + book.getNumberOfAvailableCopies() + "', '" + book.getBookID() + "')";
+        String query = "INSERT INTO books (title, author, publisher, isbn, genre, language, description, " +
+                "publicationDate, edition, numberOfCopies, numberOfPages, numberOfAvailableCopies) " + "VALUES ('" +
+                newBook.getTitle() + "', '" + newBook.getAuthor() + "', '" + newBook.getPublisher() + "', '" +
+                newBook.getIsbn() + "', '" + newBook.getGenre() + "', '" + newBook.getLanguage() + "', '" +
+                newBook.getDescription() + "', '" + newBook.getPublicationDate() + "', '" + newBook.getEdition() + "', '" +
+                newBook.getNumberOfCopies() + "', '" + newBook.getNumberOfPages() + "', '" + newBook.getNumberOfAvailableCopies() + "')";
         return DatabaseHandling.insertNewRow(query);
     }
 
@@ -150,9 +155,9 @@ public class Model
         return addBookQuery(newBook);
     }
 
-    public boolean addBook (String title, String author, String publisher, String isbn, String genre, String language, String description, String publicationDate, String edition, String numberOfPages, String numberOfCopies, String numberOfAvailableCopies, String bookID)
+    public boolean addBook (String title, String author, String publisher, String isbn, String genre, String language, String description, String publicationDate, String edition, String numberOfPages, String numberOfCopies, String numberOfAvailableCopies )
     {
-        Book newBook = new Book(title, author, publisher, isbn, genre, language, description, publicationDate, edition, numberOfPages, numberOfCopies, numberOfAvailableCopies, bookID);
+        Book newBook = new Book(title, author, publisher, isbn, genre, language, description, publicationDate, edition, numberOfPages, numberOfCopies, numberOfAvailableCopies);
         return addBookQuery(newBook);
     }
 
@@ -167,7 +172,7 @@ public class Model
     {
         String query =
                 "UPDATE books SET title = '" + editedBook.getTitle() + "', author = '" + editedBook.getAuthor() + "'," +
-                        " publisher = '" + editedBook.getPublisher() + "', isbn = '" + editedBook.getIsbn() + "', genre = '" + editedBook.getGenre() + "', language = '" + editedBook.getLanguage() + "', description = '" + editedBook.getDescription() + "', publicationDate = '" + editedBook.getPublicationDate() + "', edition = '" + editedBook.getEdition() + "', numberOfPages = '" + editedBook.getNumberOfPages() + "', numberOfCopies = '" + editedBook.getNumberOfCopies() + "', numberOfAvailableCopies = '" + editedBook.getNumberOfAvailableCopies() + "', bookID = '" + editedBook.getBookID() + "' WHERE isbn = '" + ISBN + "'";
+                        " publisher = '" + editedBook.getPublisher() + "', isbn = '" + editedBook.getIsbn() + "', genre = '" + editedBook.getGenre() + "', language = '" + editedBook.getLanguage() + "', description = '" + editedBook.getDescription() + "', publicationDate = '" + editedBook.getPublicationDate() + "', edition = '" + editedBook.getEdition() + "', numberOfPages = '" + editedBook.getNumberOfPages() + "', numberOfCopies = '" + editedBook.getNumberOfCopies() + "', numberOfAvailableCopies = '" + editedBook.getNumberOfAvailableCopies() +"' WHERE isbn = '" + ISBN + "'";
         return DatabaseHandling.updateRow(query);
     }
 
@@ -267,4 +272,9 @@ public class Model
     }
 
 
+    public ArrayList<Book> searchBook (String searchPhrase)
+    {
+        String query = "SELECT * FROM books WHERE title LIKE '%" + searchPhrase + "%' OR author LIKE '%" + searchPhrase + "%' OR publisher LIKE '%" + searchPhrase + "%' OR isbn LIKE '%" + searchPhrase + "%' OR genre LIKE '%" + searchPhrase + "%' OR language LIKE '%" + searchPhrase + "%' OR description LIKE '%" + searchPhrase + "%' OR publicationDate LIKE '%" + searchPhrase + "%' OR edition LIKE '%" + searchPhrase + "%' OR numberOfPages LIKE '%" + searchPhrase + "%' OR numberOfCopies LIKE '%" + searchPhrase + "%' OR numberOfAvailableCopies LIKE '%" + searchPhrase + "%'";
+        return DatabaseHandling.searchBooks(query);
+    }
 }

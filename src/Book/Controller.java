@@ -80,4 +80,8 @@ public class Controller
     }
 
 
+    public ArrayList<Book> searchBook (String searchPhrase)
+    {
+        return model.searchBook(searchPhrase);
+    }
 }

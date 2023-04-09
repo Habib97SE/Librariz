@@ -1,76 +1,27 @@
-import Database.DatabaseHandling;
-import Book.*;
-import MainGUI.*;
-
-import java.awt.*;
-import java.util.*;
-import javax.swing.*;
-
-import User.View;
+import Borrowing.Borrowing;
 
 public class Main
 {
-    public static void main (String[] argh)
+    public static void main (String[] argh) throws Exception
     {
 
+        Borrowing borrowing = new Borrowing();
+        borrowing.borrowBook("1");
 
-        JFrame mainFrame = new JFrame("Library Management System");
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setSize(800, 600);
-        mainFrame.setLayout(new BorderLayout());
 
-        JPanel panel = new JPanel();
+//        CustomMenuBar customMenuBar = new CustomMenuBar();
+//        String[] menuNames = {"User", "Book"};
+//        String[][] menuItems = {{"Add new user", "Edit user", "Delete user", "Show user",
+//                "Show users"}, {"Find book", "Add new book", "Edit book", "Delete book", "Show books"}};
+//        JMenuBar menuBar = customMenuBar.createMenuBar("Menu Bar", menuNames, menuItems);
+//        JFrame frame = new JFrame("Library Management System");
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        frame.setSize(800, 600);
+//        frame.setLocationRelativeTo(null);
+//        frame.setResizable(false);
+//        frame.setJMenuBar(menuBar);
+//        frame.setVisible(true);
 
-        JButton addUserButton = new JButton("Add User");
-        JButton editUserButton = new JButton("Edit User");
-        JButton deleteUserButton = new JButton("Delete User");
-        JButton viewUserButton = new JButton("View User");
-        JButton viewUsersButton = new JButton("View Users");
-
-        panel.add(addUserButton);
-        panel.add(editUserButton);
-        panel.add(deleteUserButton);
-        panel.add(viewUserButton);
-        panel.add(viewUsersButton);
-
-        mainFrame.add(panel, BorderLayout.NORTH);
-        addUserButton.addActionListener(e ->
-        {
-            View view = new User.View();
-            view.addUser();
-        });
-
-        editUserButton.addActionListener(e ->
-        {
-            User.View userView = new User.View();
-            userView.editUser();
-        });
-
-        deleteUserButton.addActionListener(e ->
-        {
-            User.View view = new User.View();
-            view.deleteUser();
-        });
-
-        viewUserButton.addActionListener(e ->
-        {
-            User.View view = new User.View();
-            try
-            {
-                view.showUser();
-            } catch (Exception ex)
-            {
-                throw new RuntimeException(ex);
-            }
-        });
-
-        viewUsersButton.addActionListener(e ->
-        {
-            User.View view = new User.View();
-            view.showUsers();
-        });
-
-        mainFrame.setVisible(true);
 
     }
 }
