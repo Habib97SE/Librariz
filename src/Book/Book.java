@@ -2,6 +2,7 @@ package Book;
 
 public class Book
 {
+    private int bookID;
     private String title;
     private String author;
     private String publisher;
@@ -50,6 +51,7 @@ public class Book
 
     public Book (Book other)
     {
+        this.bookID = other.bookID;
         this.title = other.title;
         this.author = other.author;
         this.publisher = other.publisher;
@@ -63,6 +65,17 @@ public class Book
         this.numberOfCopies = other.numberOfCopies;
         this.numberOfAvailableCopies = other.numberOfAvailableCopies;
     }
+
+    public int getBookID ()
+    {
+        return bookID;
+    }
+
+    public void setBookID (int bookID)
+    {
+        this.bookID = bookID;
+    }
+
 
     public String getTitle ()
     {

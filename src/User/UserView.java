@@ -1,5 +1,8 @@
 package User;
 
+import Borrowing.Borrowing;
+import Database.SecureData;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -10,23 +13,21 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-public class View
+public class UserView
 {
-    private String userType;
-    private String emailAddress;
-    private String password;
+    private final int WIDTH = 800;
+    private final int HEIGHT = 800;
 
     private Controller controller;
+    private User user;
 
-    public View (String userType, String emailAddress, String password)
+    public UserView (User user)
     {
-        this.userType = userType;
-        this.emailAddress = emailAddress;
-        this.password = password;
-        controller = new Controller();
+        this.user = user;
+        this.controller = new Controller(user);
     }
 
-    public View ()
+    public UserView ()
     {
         controller = new Controller();
     }
@@ -36,15 +37,16 @@ public class View
     {
         JFrame frame = new JFrame("Show user information");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(500, 500);
+        frame.setSize(WIDTH, HEIGHT);
         frame.setLayout(new GridLayout(12, 2));
 
-        JLabel personalNumberLabel = new JLabel("Personal number: ");
-        JTextField personalNumber = new JTextField();
-        JButton searchButton = new JButton("Search");
+
+        String personalNumber = JOptionPane.showInputDialog("Enter personal number: ");
 
 
-        User user = controller.getUser(personalNumber.getText());
+        String encryptedPersonalNumber = SecureData.encrypt(personalNumber);
+
+        User user = controller.getUser(encryptedPersonalNumber);
         if (user != null)
         {
             JFrame showUserframe = new JFrame("User");
@@ -72,9 +74,6 @@ public class View
             JLabel currentFine = new JLabel(String.valueOf(user.getCurrentFine()));
             JLabel userTypeLabel = new JLabel("User type: ");
             JLabel userType = new JLabel(user.getUserType());
-            personalNumberLabel = new JLabel("Personal number: ");
-            JLabel personalNumberLabelValue = new JLabel(user.getPersonalNumber());
-
             JButton closeButton = new JButton("Close");
 
             showUserframe.add(firstNameLabel);
@@ -97,8 +96,6 @@ public class View
             showUserframe.add(currentFine);
             showUserframe.add(userTypeLabel);
             showUserframe.add(userType);
-            showUserframe.add(personalNumberLabel);
-            showUserframe.add(personalNumberLabelValue);
             showUserframe.add(closeButton);
 
             showUserframe.setVisible(true);
@@ -120,79 +117,32 @@ public class View
         {
             JFrame frame = new JFrame("Users");
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            frame.setSize(500, 500);
+            frame.setSize(WIDTH, HEIGHT);
             frame.setLayout(new GridLayout(users.size() + 1, 12));
 
-            JLabel firstNameLabel = new JLabel("First name");
-            JLabel lastNameLabel = new JLabel("Last name");
-            JLabel emailAddressLabel = new JLabel("Email address");
-            JLabel phoneNumberLabel = new JLabel("Phone number");
-            JLabel homeAddressLabel = new JLabel("Home address");
-            JLabel zipCodeLabel = new JLabel("Zip code");
-            JLabel cityLabel = new JLabel("City");
-            JLabel identifierNumberLabel = new JLabel("Identifier number");
-            JLabel currentFineLabel = new JLabel("Current fine");
-            JLabel userTypeLabel = new JLabel("User type");
-            JLabel personalNumberLabel = new JLabel("Personal number");
-            JLabel copyLabel = new JLabel("Copy");
+            String columnNames[] = {"First name", "Last name", "Email address", "Phone number", "Home address", "Zip code", "City", "Identifier number", "Current fine", "User type"};
+            String data[][] = new String[users.size()][10];
 
-            frame.add(firstNameLabel);
-            frame.add(lastNameLabel);
-            frame.add(emailAddressLabel);
-            frame.add(phoneNumberLabel);
-            frame.add(homeAddressLabel);
-            frame.add(zipCodeLabel);
-            frame.add(cityLabel);
-            frame.add(identifierNumberLabel);
-            frame.add(currentFineLabel);
-            frame.add(userTypeLabel);
-            frame.add(personalNumberLabel);
-            frame.add(copyLabel);
-
-            for (User user : users)
+            for (int i = 0; i < users.size(); i++)
             {
-                JLabel firstName = new JLabel(user.getFirstName());
-                JLabel lastName = new JLabel(user.getLastName());
-                JLabel emailAddress = new JLabel(user.getEmailAddress());
-                JLabel phoneNumber = new JLabel(user.getPhoneNumber());
-                JLabel homeAddress = new JLabel(user.getHomeAddress());
-                JLabel zipCode = new JLabel(user.getZipCode());
-                JLabel city = new JLabel(user.getCity());
-                JLabel identifierNumber = new JLabel(user.getIdentifierNumber());
-                JLabel currentFine = new JLabel(String.valueOf(user.getCurrentFine()));
-                JLabel userType = new JLabel(user.getUserType());
-                JLabel personalNumber = new JLabel(user.getPersonalNumber());
-                JLabel copy = new JLabel("Copy");
-
-                copy.addMouseListener(new MouseAdapter()
-                {
-                    @Override
-                    public void mouseClicked (MouseEvent e)
-                    {
-                        StringSelection stringSelection = new StringSelection(personalNumber.getText());
-                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                        clipboard.setContents(stringSelection, null);
-                    }
-                });
-
-                frame.add(firstName);
-                frame.add(lastName);
-                frame.add(emailAddress);
-                frame.add(phoneNumber);
-                frame.add(homeAddress);
-                frame.add(zipCode);
-                frame.add(city);
-                frame.add(identifierNumber);
-                frame.add(currentFine);
-                frame.add(userType);
-                frame.add(personalNumber);
-                frame.add(copy);
-
-
-                // add action listener to copy cell content to clipboard on click
-
-
+                data[i][0] = users.get(i).getFirstName();
+                data[i][1] = users.get(i).getLastName();
+                data[i][2] = users.get(i).getEmailAddress();
+                data[i][3] = users.get(i).getPhoneNumber();
+                data[i][4] = users.get(i).getHomeAddress();
+                data[i][5] = users.get(i).getZipCode();
+                data[i][6] = users.get(i).getCity();
+                data[i][7] = users.get(i).getIdentifierNumber();
+                data[i][8] = String.valueOf(users.get(i).getCurrentFine());
+                data[i][9] = users.get(i).getUserType();
             }
+
+            JTable table = new JTable(data, columnNames);
+            JScrollPane scrollPane = new JScrollPane(table);
+            frame.add(scrollPane);
+
+            frame.setVisible(true);
+
         } else
         {
             JOptionPane.showMessageDialog(null, "No users found");
@@ -201,13 +151,12 @@ public class View
 
     /**
      * Adds a new user to the database and displays a message if the user was successfully added or not to the database
-     *
      */
     public void addUser ()
     {
         JFrame frame = new JFrame("Add user");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(500, 500);
+        frame.setSize(WIDTH, HEIGHT);
         frame.setLayout(new GridLayout(12, 2));
 
         JLabel firstNameLabel = new JLabel("First name: ");
@@ -327,7 +276,7 @@ public class View
     {
         JFrame frame = new JFrame("Delete user");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(500, 500);
+        frame.setSize(WIDTH, HEIGHT);
         frame.setLayout(new GridLayout(2, 2));
 
         JLabel personalNumberLabel = new JLabel("Personal number: ");
@@ -361,7 +310,7 @@ public class View
         // Get user by personal number
         JFrame getUserFrame = new JFrame("Get user");
         getUserFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        getUserFrame.setSize(500, 500);
+        getUserFrame.setSize(WIDTH, HEIGHT);
         getUserFrame.setLayout(new GridLayout(2, 2));
         User user = controller.getUser();
 
@@ -475,5 +424,37 @@ public class View
         getUserFrame.setVisible(true);
     }
 
+
+    /**
+     * Show borrowings history
+     */
+    public void showBorrowingsHistory ()
+    {
+        JFrame frame = new JFrame("Borrowings history");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(WIDTH, HEIGHT);
+        frame.setLayout(new GridLayout(2, 2));
+
+        ArrayList<Borrowing> borrowings = controller.getBorrowingsHistory();
+        String fullName = this.user.getFullName();
+        // make first letter of first name and last name uppercase
+        fullName = fullName.substring(0, 1).toUpperCase() + fullName.substring(1);
+        JLabel fullNameLabel = new JLabel(fullName + "'s borrowings history");
+
+        String[] columnNames = {"Book title", "Borrowing date", "Return date"};
+        Object[][] data = new Object[borrowings.size()][3];
+        for (int i = 0; i < borrowings.size(); i++)
+        {
+            data[i][0] = borrowings.get(i).getBook().getTitle();
+            data[i][1] = borrowings.get(i).getBorrowingDate();
+            data[i][2] = borrowings.get(i).getReturnDate();
+        }
+        JTable table = new JTable(data, columnNames);
+        JScrollPane scrollPane = new JScrollPane(table);
+        frame.add(fullNameLabel);
+        frame.add(scrollPane);
+        frame.setVisible(true);
+
+    }
 
 }

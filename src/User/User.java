@@ -2,6 +2,7 @@ package User;
 
 public class User
 {
+    private int userID;
     private String firstName;
     private String lastName;
     private String emailAddress;
@@ -15,15 +16,15 @@ public class User
     private String userType;
     private String personalNumber;
 
-    public User(String firstName, String lastName, String emailAddress, String phoneNumber, String homeAddress, String zipCode, String city, String identifierNumber, double currentFine, String password, String userType, String personalNumber)
+    public User (String firstName, String lastName, String emailAddress, String phoneNumber, String homeAddress, String zipCode, String city, String identifierNumber, double currentFine, String password, String userType, String personalNumber)
     {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.emailAddress = emailAddress;
+        this.firstName = firstName.toLowerCase();
+        this.lastName = lastName.toLowerCase();
+        this.emailAddress = emailAddress.toLowerCase();
         this.phoneNumber = phoneNumber;
-        this.homeAddress = homeAddress;
+        this.homeAddress = homeAddress.toLowerCase();
         this.zipCode = zipCode;
-        this.city = city;
+        this.city = city.toLowerCase();
         this.identifierNumber = identifierNumber;
         this.currentFine = currentFine;
         this.password = password;
@@ -31,7 +32,7 @@ public class User
         this.personalNumber = personalNumber;
     }
 
-    public User()
+    public User ()
     {
         this.firstName = "";
         this.lastName = "";
@@ -47,8 +48,9 @@ public class User
         this.personalNumber = "";
     }
 
-    public User(User other)
+    public User (User other)
     {
+        this.userID = other.userID;
         this.firstName = other.firstName;
         this.lastName = other.lastName;
         this.emailAddress = other.emailAddress;
@@ -63,7 +65,15 @@ public class User
         this.personalNumber = other.personalNumber;
     }
 
+    public int getUserID ()
+    {
+        return userID;
+    }
 
+    public void setUserID (int userID)
+    {
+        this.userID = userID;
+    }
 
     public String getFirstName ()
     {
@@ -185,15 +195,20 @@ public class User
         this.personalNumber = personalNumber;
     }
 
-    public boolean equals(User other)
+    public boolean equals (User other)
     {
         return this.getPersonalNumber().equals(other.getPersonalNumber());
     }
 
 
     @Override
-    public String toString()
+    public String toString ()
     {
         return "User{" + "firstName=" + firstName + ", lastName=" + lastName + ", emailAddress=" + emailAddress + ", phoneNumber=" + phoneNumber + ", homeAddress=" + homeAddress + ", zipCode=" + zipCode + ", city=" + city + ", identifierNumber=" + identifierNumber + ", currentFine=" + currentFine + ", password=" + password + ", userType=" + userType + ", personalNumber=" + personalNumber + '}';
+    }
+
+    public String getFullName ()
+    {
+        return firstName + " " + lastName;
     }
 }

@@ -11,12 +11,20 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+
+/**
+ * This class is used to create a borrowing object.
+ * It is used to store information about a book and a user.
+ * It is also used to get the current date and the date 30 days from now.
+ */
 public class Borrowing
 {
     private Book book;
     private User user;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final String today = LocalDate.now().format(formatter);
+    private String startDate;
+    private String endDate;
 
     public Borrowing ()
     {
@@ -24,10 +32,20 @@ public class Borrowing
         user = new User();
     }
 
+    public Borrowing (Book book, User user, String startDate, String endDate)
+    {
+        this.book = book;
+        this.user = user;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
     public Borrowing (Book book, User user)
     {
         this.book = book;
         this.user = user;
+        this.startDate = "";
+        this.endDate = "";
     }
 
     public void setBook (Book book)
@@ -45,6 +63,28 @@ public class Borrowing
         this.user = user;
     }
 
+
+    public void setStartDate (String startDate)
+    {
+        this.startDate = startDate;
+    }
+
+    public String getStartDate ()
+    {
+        return startDate;
+    }
+
+    public void setEndDate (String endDate)
+    {
+        this.endDate = endDate;
+    }
+
+    public String getEndDate ()
+    {
+        return endDate;
+    }
+
+
     public User getUser ()
     {
         return user;
@@ -55,7 +95,7 @@ public class Borrowing
      *
      * @return the current date
      */
-    public String getDateString ()
+    public String getBorrowingDate ()
     {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate today = LocalDate.now();
@@ -67,12 +107,22 @@ public class Borrowing
      *
      * @return the date 30 days from now
      */
-    public String getReturnDateString ()
+    public String getReturnDate ()
     {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate today = LocalDate.now();
         LocalDate returnDate = today.plusDays(30);
         return returnDate.format(formatter);
+    }
+
+    public int getUserID ()
+    {
+        return this.user.getUserID();
+    }
+
+    public int getBookID ()
+    {
+        return this.book.getBookID();
     }
 
     public boolean equals (Borrowing other)

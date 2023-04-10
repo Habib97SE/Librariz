@@ -1,5 +1,7 @@
 package User;
 
+import Borrowing.Borrowing;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -17,6 +19,7 @@ public class Controller
     public Controller (User user)
     {
         this.user = user;
+        model = new Model(user);
     }
 
     public User getUser ()
@@ -55,7 +58,7 @@ public class Controller
 
     public User getUser (String personalNumber) throws Exception
     {
-        return model.getUser(Database.SecureData.encrypt(personalNumber));
+        return model.getUser(personalNumber);
     }
 
     public ArrayList<User> getAllUsers ()
@@ -137,6 +140,11 @@ public class Controller
     {
         this.user = user;
         return updateUser();
+    }
+
+    public ArrayList<Borrowing> getBorrowingsHistory ()
+    {
+        return model.getBorrowingsHistory();
     }
 
     public enum Error

@@ -185,10 +185,11 @@ public class DatabaseHandling
         return books;
     }
 
-    public static User getUser(String personalNumber)
+    public static User getUser (String personalNumber)
     {
         User user = new User();
-        try {
+        try
+        {
             String query = "SELECT * FROM users WHERE personalNumber = ?";
             Connection connection = DriverManager.getConnection(url, userName, password);
             PreparedStatement statement = connection.prepareStatement(query);
@@ -196,9 +197,23 @@ public class DatabaseHandling
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next())
             {
-
+                user.setFirstName(resultSet.getString("firstName"));
+                user.setLastName(resultSet.getString("lastName"));
+                user.setPersonalNumber(resultSet.getString("personalNumber"));
+                user.setPhoneNumber(resultSet.getString("phoneNumber"));
+                user.setIdentifierNumber(resultSet.getString("identifierNumber"));
+                user.setCurrentFine(resultSet.getDouble("currentFine"));
+                user.setHomeAddress(resultSet.getString("homeAddress"));
+                user.setPhoneNumber(resultSet.getString("phoneNumber"));
+                user.setEmailAddress(resultSet.getString("emailAddress"));
+                user.setPassword(resultSet.getString("password"));
+                return user;
+            } else
+            {
+                return null;
             }
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             return null;
         }
     }
@@ -223,19 +238,15 @@ public class DatabaseHandling
 
     public static boolean insertNewBorrowing (Borrowing borrowing) throws Exception
     {
-        String query = "INSERT INTO borrowings (userId, bookId, borrowed_at, returned_at) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO borrowings (bookId, userId, borrowingDate, returnDate) VALUES (?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(url, userName, password);
              PreparedStatement stmt = conn.prepareStatement(query))
         {
-            stmt.setInt(1, getUserIdByPersonalNumber(borrowing.getUser().getPersonalNumber()));
-            stmt.setInt(2, getBookIdByISBN(borrowing.getBook().getIsbn()));
-            stmt.setString(3, borrowing.getDateString());
-            stmt.setString(4, borrowing.getReturnDateString());
+            stmt.setInt(1, borrowing.getBookID());
+            stmt.setInt(2, borrowing.getUserID());
+            stmt.setString(3, borrowing.getBorrowingDate());
+            stmt.setString(4, borrowing.getReturnDate());
             return stmt.executeUpdate() > 0;
-        } catch (SQLException e)
-        {
-            e.printStackTrace();
-            return false;
         }
     }
 
@@ -253,6 +264,328 @@ public class DatabaseHandling
         {
             e.printStackTrace();
             return -1;
+        }
+    }
+
+    public static User getUserByPersonalNumber (String encryptedPersonalNumber)
+    {
+        try
+        {
+            String query = "SELECT * FROM users WHERE personalNumber = ?";
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, encryptedPersonalNumber);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next())
+            {
+                User user = new User();
+                user.setUserID(resultSet.getInt("id"));
+                user.setFirstName(resultSet.getString("firstName"));
+                user.setLastName(resultSet.getString("lastName"));
+                user.setEmailAddress(resultSet.getString("emailAddress"));
+                user.setPhoneNumber(resultSet.getString("phoneNumber"));
+                user.setHomeAddress(resultSet.getString("homeAddress"));
+                user.setZipCode(resultSet.getString("zipCode"));
+                user.setCity(resultSet.getString("city"));
+                user.setIdentifierNumber(resultSet.getString("identifierNumber"));
+                user.setCurrentFine(resultSet.getDouble("currentFine"));
+                user.setPassword(resultSet.getString("password"));
+                user.setPersonalNumber(resultSet.getString("personalNumber"));
+                return user;
+            } else
+            {
+                return null;
+            }
+        } catch (Exception e)
+        {
+            return null;
+        }
+    }
+
+    public static Book getBookByISBN (String isbn)
+    {
+        try
+        {
+            String query = "SELECT * FROM books WHERE isbn = ?";
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, isbn);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next())
+            {
+                Book book = new Book();
+                book.setBookID(resultSet.getInt("id"));
+                book.setIsbn(resultSet.getString("isbn"));
+                book.setTitle(resultSet.getString("title"));
+                book.setAuthor(resultSet.getString("author"));
+                book.setPublisher(resultSet.getString("publisher"));
+                book.setGenre(resultSet.getString("genre"));
+                book.setLanguage(resultSet.getString("language"));
+                book.setDescription(resultSet.getString("description"));
+                book.setPublicationDate(resultSet.getString("publicationDate"));
+                book.setEdition(resultSet.getString("edition"));
+                book.setNumberOfCopies(resultSet.getString("numberOfCopies"));
+                book.setNumberOfPages(resultSet.getString("numberOfPages"));
+                book.setNumberOfAvailableCopies(resultSet.getString("numberOfAvailableCopies"));
+                return book;
+            } else
+            {
+                return null;
+            }
+        } catch (Exception e)
+        {
+            return null;
+        }
+    }
+
+    public static String getLastReturnDate (int borrowingID)
+    {
+        // get the last record where both userID and bookID are the same
+        try
+        {
+            String query = "SELECT * FROM borrowings WHERE id = ?";
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, borrowingID);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next())
+            {
+                return resultSet.getString("returnDate");
+            } else
+            {
+                return null;
+            }
+        } catch (Exception e)
+        {
+            return null;
+        }
+    }
+
+    public static boolean updateUserFine (int userID, int fine)
+    {
+        try
+        {
+            String query = "UPDATE users SET currentFine = ? WHERE id = ?";
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, fine);
+            statement.setInt(2, userID);
+            return statement.executeUpdate() > 0;
+        } catch (Exception e)
+        {
+            return false;
+        }
+    }
+
+    public static boolean updateBookAvailableCopies (int bookID, String s)
+    {
+        try
+        {
+            String query = "UPDATE books SET numberOfAvailableCopies = ? WHERE id = ?";
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, s);
+            statement.setInt(2, bookID);
+            return statement.executeUpdate() > 0;
+
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
+    public static int getBorrowingID (int bookID, int userID)
+    {
+        try
+        {
+            String query = "SELECT * FROM borrowings WHERE bookId = ? AND userId = ? ORDER BY id DESC LIMIT 1";
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, bookID);
+            statement.setInt(2, userID);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next())
+            {
+                return resultSet.getInt("id");
+            } else
+            {
+                return -1;
+            }
+        } catch (Exception e)
+        {
+            return -1;
+        }
+    }
+
+    public static boolean updateActualReturnedDate (int borrowingID, String toString)
+    {
+        try
+        {
+            String query = "UPDATE borrowings SET actualReturnedDate = ? WHERE id = ?";
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, toString);
+            statement.setInt(2, borrowingID);
+            return statement.executeUpdate() > 0;
+
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static ArrayList<Borrowing> getBorrowingsHistory (int userID)
+    {
+        ArrayList<Borrowing> borrowings = new ArrayList<>();
+
+        try
+        {
+            String query = "SELECT * FROM borrowings WHERE userId = ?";
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, userID);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next())
+            {
+                Borrowing borrowing = new Borrowing(getBookByID(resultSet.getString("bookId")),
+                        getUserByID(resultSet.getInt("userId")), resultSet.getString("borrowDate"),
+                        resultSet.getString("actualReturnedDate"));
+
+                borrowings.add(borrowing);
+            }
+            return borrowings;
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            return borrowings;
+        }
+    }
+
+    private static User getUserByID (int userId)
+    {
+        try
+        {
+            String query = "SELECT * FROM users WHERE id = ?";
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next())
+            {
+                User user = new User();
+                user.setUserID(resultSet.getInt("id"));
+                user.setFirstName(resultSet.getString("firstName"));
+                user.setLastName(resultSet.getString("lastName"));
+                user.setEmailAddress(resultSet.getString("emailAddress"));
+                user.setPhoneNumber(resultSet.getString("phoneNumber"));
+                user.setHomeAddress(resultSet.getString("homeAddress"));
+                user.setZipCode(resultSet.getString("zipCode"));
+                user.setCity(resultSet.getString("city"));
+                user.setIdentifierNumber(resultSet.getString("identifierNumber"));
+                user.setCurrentFine(resultSet.getDouble("currentFine"));
+                user.setPassword(resultSet.getString("password"));
+                user.setPersonalNumber(resultSet.getString("personalNumber"));
+                return user;
+            } else
+            {
+                return null;
+            }
+        } catch (Exception e)
+        {
+            return null;
+        }
+    }
+
+    private static Book getBookByID (String bookId)
+    {
+        try
+        {
+            String query = "SELECT * FROM books WHERE id = ?";
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, bookId);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next())
+            {
+                Book book = new Book();
+                book.setBookID(resultSet.getInt("id"));
+                book.setIsbn(resultSet.getString("isbn"));
+                book.setTitle(resultSet.getString("title"));
+                book.setAuthor(resultSet.getString("author"));
+                book.setPublisher(resultSet.getString("publisher"));
+                book.setGenre(resultSet.getString("genre"));
+                book.setLanguage(resultSet.getString("language"));
+                book.setDescription(resultSet.getString("description"));
+                book.setPublicationDate(resultSet.getString("publicationDate"));
+                book.setEdition(resultSet.getString("edition"));
+                book.setNumberOfCopies(resultSet.getString("numberOfCopies"));
+                book.setNumberOfPages(resultSet.getString("numberOfPages"));
+                book.setNumberOfAvailableCopies(resultSet.getString("numberOfAvailableCopies"));
+                return book;
+            } else
+            {
+                return null;
+            }
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static int checkLogin (String emailAddress, String password) throws Exception
+    {
+        int userID = -1;
+        password = SecureData.encrypt(password);
+
+        String query = "SELECT id FROM users WHERE emailAddress = ? AND password = ?";
+        Connection connection = DriverManager.getConnection(url, userName, password);
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, emailAddress);
+        statement.setString(2, password);
+        ResultSet resultSet = statement.executeQuery();
+        if (resultSet.next())
+        {
+            userID = resultSet.getInt("id");
+        }
+        return userID;
+    }
+
+    public static User getUserById (int userID)
+    {
+        try
+        {
+            String query = "SELECT * FROM users WHERE id = ?";
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, userID);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next())
+            {
+                User user = new User();
+                user.setUserID(resultSet.getInt("id"));
+                user.setFirstName(resultSet.getString("firstName"));
+                user.setLastName(resultSet.getString("lastName"));
+                user.setEmailAddress(resultSet.getString("emailAddress"));
+                user.setPhoneNumber(resultSet.getString("phoneNumber"));
+                user.setHomeAddress(resultSet.getString("homeAddress"));
+                user.setZipCode(resultSet.getString("zipCode"));
+                user.setCity(resultSet.getString("city"));
+                user.setIdentifierNumber(resultSet.getString("identifierNumber"));
+                user.setCurrentFine(resultSet.getDouble("currentFine"));
+                user.setPassword(resultSet.getString("password"));
+                user.setPersonalNumber(resultSet.getString("personalNumber"));
+                return user;
+            } else
+            {
+                return null;
+            }
+        } catch (Exception e)
+        {
+            return null;
         }
     }
 }

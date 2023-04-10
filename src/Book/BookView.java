@@ -1,24 +1,31 @@
 package Book;
 
+import Borrowing.BorrowingView;
+
 import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Objects;
+import User.User;
 
 
-public class View
+public class BookView
 {
     private final Controller controller;
+    private final int WIDTH = 800;
+    private final int HEIGHT = 800;
+    private User user;
 
-    public View ()
+    public BookView (User user)
     {
+        this.user = user;
         controller = new Controller();
     }
 
     /**
      * This method is used to add a book to the database
      */
-    public void findBook ()
+    public String findBook ()
     {
         Book book = null;
         while (true)
@@ -30,14 +37,15 @@ public class View
             {
                 int choice = JOptionPane.showConfirmDialog(null, "Book not found. Do you want to try again?", "Book not found", JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.NO_OPTION) break;
-            } else {
+            } else
+            {
                 viewBook(book);
                 break;
             }
         }
 
         // view book in the GUI
-
+        return book.getIsbn();
 
     }
 
@@ -45,7 +53,7 @@ public class View
     {
         JFrame frame = new JFrame("View Book");
 
-        frame.setSize(800, 600);
+        frame.setSize(WIDTH, HEIGHT);
 
         // create table with two columns, one for the attribute name and the other for the attribute value
         String[] columnNames = {"Attribute", "Value"};
@@ -67,10 +75,11 @@ public class View
 
         // display the books in the GUI
 
+        BorrowingView borrowingView = new BorrowingView(user);
 
         JFrame frame = new JFrame("View All Books");
 
-        frame.setSize(800, 600);
+        frame.setSize(WIDTH, HEIGHT);
 
         JPanel panel = new JPanel();
 
@@ -80,8 +89,11 @@ public class View
 
         ArrayList<Book> books = controller.getBooks();
 
-        String[] columnNames = {"Title", "Author", "Publisher", "ISBN", "Genre", "Language", "Description", "Publication Date", "Edition", "Number of Pages", "Number of Copies", "Number of Available Copies"};
+        String[] columnNames = {"Title", "Author", "Publisher", "ISBN", "Genre", "Language", "Description",
+                "Publication Date", "Edition", "Number of Pages", "Number of Copies", "Number of Available Copies"};
         String[][] data = new String[books.size()][12];
+
+        String isbn = "";
 
         for (int i = 0; i < books.size(); i++)
         {
@@ -103,12 +115,11 @@ public class View
 
         JScrollPane scrollPane = new JScrollPane(table);
 
-        panel.add(scrollPane);
-
-        frame.add(panel);
+        frame.add(scrollPane);
 
         frame.setVisible(true);
     }
+
 
     /**
      * This method is used to add a book to the database
@@ -117,7 +128,7 @@ public class View
     {
         JFrame frame = new JFrame("Add Book");
 
-        frame.setSize(800, 600);
+        frame.setSize(WIDTH, HEIGHT);
 
         JPanel panel = new JPanel();
 
@@ -202,7 +213,7 @@ public class View
     {
         JFrame frame = new JFrame("Delete Book");
 
-        frame.setSize(800, 600);
+        frame.setSize(WIDTH, HEIGHT);
 
         JPanel panel = new JPanel();
 
@@ -241,7 +252,7 @@ public class View
     {
         JFrame frame = new JFrame("Update Book");
 
-        frame.setSize(800, 600);
+        frame.setSize(WIDTH, HEIGHT);
 
         JPanel panel = new JPanel();
 
@@ -290,7 +301,7 @@ public class View
         ArrayList<Book> books = controller.searchBook(searchPhrase);
         JFrame frame = new JFrame("Search Book");
         JPanel panel = new JPanel();
-        frame.setSize(800, 600);
+        frame.setSize(WIDTH, HEIGHT);
         String[] columnNames = {"Title", "Author", "Publisher", "ISBN", "Genre", "Language", "Description", "Publication Date", "Edition", "Number of Pages", "Number of Copies", "Number of Available Copies"};
         Object[][] data = new Object[books.size()][12];
         for (int i = 0; i < books.size(); i++)

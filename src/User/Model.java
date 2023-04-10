@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import Borrowing.Borrowing;
 import Database.DatabaseHandling;
 import Database.SecureData;
 
@@ -67,8 +68,6 @@ public class Model
 
     public User getUser (String personalNumber) throws Exception
     {
-        personalNumber = SecureData.encrypt(personalNumber);
-        System.out.println(SecureData.decrypt("wvRHq0NsgC/h1X6rtk9noRALZQuJjxZtfMKYs3Cy44I="));
         try
         {
             String query = "SELECT * FROM users WHERE personalNumber = '" + personalNumber + "'";
@@ -172,4 +171,8 @@ public class Model
         return identifierNumber;
     }
 
+    public ArrayList<Borrowing> getBorrowingsHistory ()
+    {
+        return DatabaseHandling.getBorrowingsHistory(user.getUserID());
+    }
 }

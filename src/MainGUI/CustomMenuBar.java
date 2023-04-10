@@ -1,10 +1,14 @@
 package MainGUI;
-
+import User.User;
 import javax.swing.*;
 import java.awt.event.*;
 
 import Database.DatabaseHandling;
 import Database.SecureData;
+
+import Book.BookView;
+import Borrowing.BorrowingView;
+import User.UserView;
 
 
 /**
@@ -17,6 +21,23 @@ import Database.SecureData;
  */
 public class CustomMenuBar extends JMenuBar
 {
+
+    private User user;
+
+    public CustomMenuBar (User user)
+    {
+        this.user = user;
+    }
+
+    public void setUser(User user)
+    {
+        this.user = user;
+    }
+
+    public User getUser()
+    {
+        return user;
+    }
 
     /*
      * Create a menu bar with menus and menu items
@@ -88,8 +109,9 @@ public class CustomMenuBar extends JMenuBar
     public void handleMenuItemAction (JMenuItem menuItem) throws Exception
     {
         String menuItemName = menuItem.getText();
-        User.View userView = new User.View();
-        Book.View bookView = new Book.View();
+        UserView userView = new UserView(user);
+        BookView bookView = new BookView(user);
+        BorrowingView borrowingView = new BorrowingView(user);
         switch (menuItemName)
         {
             case "Add new user":
@@ -130,6 +152,14 @@ public class CustomMenuBar extends JMenuBar
             case "Show books":
                 // Call method to show books
                 bookView.viewAllBooks();
+                break;
+            case "Borrow book":
+                // Call method to borrow book
+                borrowingView.borrowBook(bookView.findBook());
+                break;
+            case "Show borrowings":
+                // Call method to show borrowings
+                userView.showBorrowingsHistory();
                 break;
             default:
                 JOptionPane.showMessageDialog(null, "Invalid menu item", "Error", JOptionPane.ERROR_MESSAGE);
