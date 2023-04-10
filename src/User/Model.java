@@ -54,10 +54,9 @@ public class Model
         return DatabaseHandling.insertNewRow(query);
     }
 
-    public boolean updateUser ()
+    public boolean updateUser (User editedUser)
     {
-        String query = "UPDATE users SET firstName = '" + user.getFirstName() + "', lastName = '" + user.getLastName() + "', emailAddress = '" + user.getEmailAddress() + "', phoneNumber = '" + user.getPhoneNumber() + "', homeAddress = '" + user.getHomeAddress() + "', zipCode = '" + user.getZipCode() + "', city = '" + user.getCity() + "', identifierNumber = '" + user.getIdentifierNumber() + "', currentFine = '" + user.getCurrentFine() + "', password = '" + user.getPassword() + "', userType = '" + user.getUserType() + "', personalNumber = '" + user.getPersonalNumber() + "' WHERE identifierNumber = '" + user.getIdentifierNumber() + "'";
-        return DatabaseHandling.insertNewRow(query);
+        return DatabaseHandling.updateUser(editedUser);
     }
 
     public boolean deleteUser ()
@@ -174,5 +173,10 @@ public class Model
     public ArrayList<Borrowing> getBorrowingsHistory ()
     {
         return DatabaseHandling.getBorrowingsHistory(user.getUserID());
+    }
+
+    public User getUserById (String id)
+    {
+        return DatabaseHandling.getUserById(Integer.parseInt(id));
     }
 }

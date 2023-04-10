@@ -41,72 +41,28 @@ public class UserView
         frame.setLayout(new GridLayout(12, 2));
 
 
-        String personalNumber = JOptionPane.showInputDialog("Enter personal number: ");
+        String columnNames[] = {"First name", "Last name", "Email address", "Phone number", "Home address", "Zip code", "City", "Identifier number", "Current fine"};
+        String data[][] = new String[1][9];
 
+        user = controller.getUserById(Integer.toString(user.getUserID()));
 
-        String encryptedPersonalNumber = SecureData.encrypt(personalNumber);
+        data[0][0] = user.getFirstName();
+        data[0][1] = user.getLastName();
+        data[0][2] = user.getEmailAddress();
+        data[0][3] = user.getPhoneNumber();
+        data[0][4] = user.getHomeAddress();
+        data[0][5] = user.getZipCode();
+        data[0][6] = user.getCity();
+        data[0][7] = user.getIdentifierNumber();
+        data[0][8] = String.valueOf(user.getCurrentFine());
 
-        User user = controller.getUser(encryptedPersonalNumber);
-        if (user != null)
-        {
-            JFrame showUserframe = new JFrame("User");
-            showUserframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            showUserframe.setSize(500, 500);
-            showUserframe.setLayout(new GridLayout(12, 2));
-
-            JLabel firstNameLabel = new JLabel("First name: ");
-            JLabel firstName = new JLabel(user.getFirstName());
-            JLabel lastNameLabel = new JLabel("Last name: ");
-            JLabel lastName = new JLabel(user.getLastName());
-            JLabel emailAddressLabel = new JLabel("Email address: ");
-            JLabel emailAddress = new JLabel(user.getEmailAddress());
-            JLabel phoneNumberLabel = new JLabel("Phone number: ");
-            JLabel phoneNumber = new JLabel(user.getPhoneNumber());
-            JLabel homeAddressLabel = new JLabel("Home address: ");
-            JLabel homeAddress = new JLabel(user.getHomeAddress());
-            JLabel zipCodeLabel = new JLabel("Zip code: ");
-            JLabel zipCode = new JLabel(user.getZipCode());
-            JLabel cityLabel = new JLabel("City: ");
-            JLabel city = new JLabel(user.getCity());
-            JLabel identifierNumberLabel = new JLabel("Identifier number: ");
-            JLabel identifierNumber = new JLabel(user.getIdentifierNumber());
-            JLabel currentFineLabel = new JLabel("Current fine: ");
-            JLabel currentFine = new JLabel(String.valueOf(user.getCurrentFine()));
-            JLabel userTypeLabel = new JLabel("User type: ");
-            JLabel userType = new JLabel(user.getUserType());
-            JButton closeButton = new JButton("Close");
-
-            showUserframe.add(firstNameLabel);
-            showUserframe.add(firstName);
-            showUserframe.add(lastNameLabel);
-            showUserframe.add(lastName);
-            showUserframe.add(emailAddressLabel);
-            showUserframe.add(emailAddress);
-            showUserframe.add(phoneNumberLabel);
-            showUserframe.add(phoneNumber);
-            showUserframe.add(homeAddressLabel);
-            showUserframe.add(homeAddress);
-            showUserframe.add(zipCodeLabel);
-            showUserframe.add(zipCode);
-            showUserframe.add(cityLabel);
-            showUserframe.add(city);
-            showUserframe.add(identifierNumberLabel);
-            showUserframe.add(identifierNumber);
-            showUserframe.add(currentFineLabel);
-            showUserframe.add(currentFine);
-            showUserframe.add(userTypeLabel);
-            showUserframe.add(userType);
-            showUserframe.add(closeButton);
-
-            showUserframe.setVisible(true);
-
-            closeButton.addActionListener(e -> showUserframe.dispose());
-
-
-        } else
-        {
-            JOptionPane.showMessageDialog(null, "User not found");
-        }
+        JTable table = new JTable(data, columnNames);
+        table.setPreferredScrollableViewportSize(new Dimension(500, 70));
+        table.setFillsViewportHeight(true);
+        table.setEnabled(false);
+        JScrollPane scrollPane = new JScrollPane(table);
+        frame.add(scrollPane);
+        frame.setVisible(true);
     }
 
     public void showUsers ()
@@ -307,121 +263,84 @@ public class UserView
 
     public void editUser ()
     {
-        // Get user by personal number
-        JFrame getUserFrame = new JFrame("Get user");
-        getUserFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        getUserFrame.setSize(WIDTH, HEIGHT);
-        getUserFrame.setLayout(new GridLayout(2, 2));
-        User user = controller.getUser();
+        JFrame frame = new JFrame("Edit user");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(WIDTH, HEIGHT);
+        frame.setLayout(new GridLayout(6, 2));
 
-        AtomicReference<JLabel> personalNumberLabel = new AtomicReference<>(new JLabel("Personal number: "));
-        AtomicReference<JTextField> personalNumberTextfield = new AtomicReference<>(new JTextField());
-        JButton getUserButton = new JButton("Get user");
+        JLabel phoneNumberTextField = new JLabel("Phone number: ");
+        JTextField phoneNumber = new JTextField();
+        JLabel emailAddressLabel = new JLabel("Email address: ");
+        JTextField emailAddress = new JTextField();
+        JLabel homeAddressLabel = new JLabel("Home address: ");
+        JTextField homeAddress = new JTextField();
+        JLabel zipCodeLabel = new JLabel("Zip code: ");
+        JTextField zipCode = new JTextField();
+        JLabel cityLabel = new JLabel("City: ");
+        JTextField city = new JTextField();
+        JLabel passwordLabel = new JLabel("Password: ");
+        JPasswordField passwordField = new JPasswordField();
 
-        getUserFrame.add(personalNumberLabel.get());
-        getUserFrame.add(personalNumberTextfield.get());
-        getUserFrame.add(getUserButton);
+        StringBuilder password = new StringBuilder();
 
-        getUserButton.addActionListener(e ->
+        for (char c : passwordField.getPassword())
         {
-            String personalNumber = personalNumberTextfield.get().getText();
-            AtomicReference<User> userToEdit = null;
-            try
+            password.append(c);
+        }
+
+
+        JButton editUserButton = new JButton("Edit user");
+        JButton cancelButton = new JButton("Cancel");
+
+        frame.add(phoneNumberTextField);
+        frame.add(phoneNumber);
+        frame.add(emailAddressLabel);
+        frame.add(emailAddress);
+        frame.add(homeAddressLabel);
+        frame.add(homeAddress);
+        frame.add(zipCodeLabel);
+        frame.add(zipCode);
+        frame.add(cityLabel);
+        frame.add(city);
+        frame.add(passwordLabel);
+        frame.add(passwordField);
+
+        frame.add(cancelButton);
+        frame.add(editUserButton);
+
+        cancelButton.addActionListener(e ->
+        {
+            frame.dispose();
+        });
+
+        editUserButton.addActionListener(e ->
+        {
+            User editedUser = new User();
+            editedUser.setFirstName(user.getFirstName());
+            editedUser.setLastName(user.getLastName());
+            editedUser.setEmailAddress(emailAddress.getText());
+            editedUser.setPhoneNumber(phoneNumber.getText());
+            editedUser.setHomeAddress(homeAddress.getText());
+            editedUser.setZipCode(zipCode.getText());
+            editedUser.setCity(city.getText());
+            editedUser.setPersonalNumber(user.getPersonalNumber());
+            editedUser.setPassword(password.toString());
+            editedUser.setUserType(user.getUserType());
+            editedUser.setUserID(user.getUserID());
+            editedUser.setIdentifierNumber(user.getIdentifierNumber());
+            editedUser.setCurrentFine(user.getCurrentFine());
+
+            if (controller.editUser(editedUser))
             {
-                userToEdit = new AtomicReference<User>(controller.getUser(personalNumber));
-            } catch (Exception ex)
-            {
-                throw new RuntimeException(ex);
-            }
-
-            if (userToEdit.get() != null)
-            {
-                // Edit user
-                JFrame editUserFrame = new JFrame("Edit user");
-                editUserFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                editUserFrame.setSize(500, 500);
-                editUserFrame.setLayout(new GridLayout(2, 2));
-
-                JLabel firstNameLabel = new JLabel("First name: ");
-                JTextField firstName = new JTextField();
-                JLabel lastNameLabel = new JLabel("Last name: ");
-                JTextField lastName = new JTextField();
-                JLabel emailAddressLabel = new JLabel("Email address: ");
-                JTextField emailAddress = new JTextField();
-                JLabel phoneNumberLabel = new JLabel("Phone number: ");
-                JTextField phoneNumber = new JTextField();
-                JLabel homeAddressLabel = new JLabel("Home address: ");
-                JTextField homeAddress = new JTextField();
-                JLabel zipCodeLabel = new JLabel("Zip code: ");
-                JTextField zipCode = new JTextField();
-                JLabel cityLabel = new JLabel("City: ");
-                JTextField city = new JTextField();
-                JLabel identifierNumberLabel = new JLabel("Identifier number: ");
-                JTextField identifierNumber = new JTextField();
-                JLabel currentFineLabel = new JLabel("Current fine: ");
-                JTextField currentFine = new JTextField();
-                JLabel userTypeLabel = new JLabel("User type: ");
-                JTextField userType = new JTextField();
-                personalNumberLabel.set(new JLabel("Personal number: "));
-                personalNumberTextfield.set(new JTextField());
-
-                JButton editUserButton = new JButton("Edit user");
-
-                editUserFrame.add(firstNameLabel);
-                editUserFrame.add(firstName);
-                editUserFrame.add(lastNameLabel);
-                editUserFrame.add(lastName);
-                editUserFrame.add(emailAddressLabel);
-                editUserFrame.add(emailAddress);
-                editUserFrame.add(phoneNumberLabel);
-                editUserFrame.add(phoneNumber);
-                editUserFrame.add(homeAddressLabel);
-                editUserFrame.add(homeAddress);
-                editUserFrame.add(zipCodeLabel);
-                editUserFrame.add(zipCode);
-                editUserFrame.add(cityLabel);
-                editUserFrame.add(city);
-                editUserFrame.add(identifierNumberLabel);
-                editUserFrame.add(identifierNumber);
-                editUserFrame.add(currentFineLabel);
-                editUserFrame.add(currentFine);
-                editUserFrame.add(userTypeLabel);
-                editUserFrame.add(userType);
-                editUserFrame.add(personalNumberLabel.get());
-                editUserFrame.add(personalNumberTextfield.get());
-                editUserFrame.add(editUserButton);
-
-                editUserButton.addActionListener(e1 ->
-                {
-                    User editedUser = new User();
-                    editedUser.setFirstName(firstName.getText());
-                    editedUser.setLastName(lastName.getText());
-                    editedUser.setEmailAddress(emailAddress.getText());
-                    editedUser.setPhoneNumber(phoneNumber.getText());
-                    editedUser.setHomeAddress(homeAddress.getText());
-                    editedUser.setZipCode(zipCode.getText());
-                    editedUser.setCity(city.getText());
-                    editedUser.setIdentifierNumber(identifierNumber.getText());
-                    editedUser.setCurrentFine(Double.parseDouble(currentFine.getText()));
-                    editedUser.setUserType(userType.getText());
-                    editedUser.setPersonalNumber(personalNumberTextfield.get().getText());
-
-                    if (controller.editUser(user))
-                    {
-                        JOptionPane.showMessageDialog(null, "User edited, click OK to continue", "Success",
-                                JOptionPane.INFORMATION_MESSAGE);
-                        editUserFrame.dispose();
-                    } else
-                    {
-                        JOptionPane.showMessageDialog(null, "User not edited", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                });
+                JOptionPane.showMessageDialog(null, "User edited, click OK to continue", "Success",
+                        JOptionPane.INFORMATION_MESSAGE);
+                frame.dispose();
             } else
             {
-                JOptionPane.showMessageDialog(null, "User not found", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "User not edited", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
-        getUserFrame.setVisible(true);
+        frame.setVisible(true);
     }
 
 

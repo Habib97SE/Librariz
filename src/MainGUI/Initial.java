@@ -33,31 +33,51 @@ public class Initial
             JTextField emailAddressTextField = new JTextField();
             panel.add(emailAddressTextField);
             panel.add(new JLabel("Password:"));
-            JTextField passwordField = new JPasswordField();
+            JPasswordField passwordField = new JPasswordField();
             panel.add(passwordField);
-
             int result = JOptionPane.showConfirmDialog(null, panel, "Login:", JOptionPane.OK_CANCEL_OPTION);
 
             if (!SecureData.isValidEmail(emailAddressTextField.getText()))
             {
-                JOptionPane.showMessageDialog(null, "Invalid email address");
-                continue;
+                // show error message and ask if user want to cancel or continue
+                int option = JOptionPane.showConfirmDialog(null, "Invalid email address. Do you want to continue?", "Error", JOptionPane.YES_NO_OPTION);
+                if (option == JOptionPane.YES_OPTION)
+                {
+                    continue;
+                } else
+                {
+                    break;
+                }
             }
 
             if (result == JOptionPane.OK_OPTION)
             {
                 String emailAddress = emailAddressTextField.getText();
-                String password = passwordField.getText();
+                char[] passwordArr = passwordField.getPassword();
+
+                StringBuilder password = new StringBuilder();
+                for (char c : passwordArr)
+                {
+                    password.append(c);
+                }
                 // Use the input values as needed
-                int userID = DatabaseHandling.checkLogin(emailAddress, SecureData.encrypt(password));
+                int userID = DatabaseHandling.checkLogin(emailAddress, password.toString());
                 if (userID != -1)
                 {
-                    user = DatabaseHandling.getUser(Integer.toString(userID));
+                    user = DatabaseHandling.getUserById(userID);
                     new MainGUI(user);
                     break;
                 } else
                 {
-                    JOptionPane.showMessageDialog(null, "Invalid username or password");
+                    int option = JOptionPane.showConfirmDialog(null, "Invalid email address or password. Do you want " +
+                            "to continue?", "Error", JOptionPane.YES_NO_OPTION);
+                    if (option == JOptionPane.YES_OPTION)
+                    {
+                        continue;
+                    } else
+                    {
+                        break;
+                    }
                 }
             }
         } // end of while loop
@@ -69,7 +89,6 @@ public class Initial
         }
 
     }
-
 
 
 }

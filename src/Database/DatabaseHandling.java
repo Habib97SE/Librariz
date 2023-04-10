@@ -197,16 +197,19 @@ public class DatabaseHandling
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next())
             {
+                user.setUserID(resultSet.getInt("id"));
                 user.setFirstName(resultSet.getString("firstName"));
                 user.setLastName(resultSet.getString("lastName"));
-                user.setPersonalNumber(resultSet.getString("personalNumber"));
+                user.setEmailAddress(resultSet.getString("emailAddress"));
                 user.setPhoneNumber(resultSet.getString("phoneNumber"));
+                user.setHomeAddress(resultSet.getString("homeAddress"));
+                user.setZipCode(resultSet.getString("zipCode"));
+                user.setCity(resultSet.getString("city"));
                 user.setIdentifierNumber(resultSet.getString("identifierNumber"));
                 user.setCurrentFine(resultSet.getDouble("currentFine"));
-                user.setHomeAddress(resultSet.getString("homeAddress"));
-                user.setPhoneNumber(resultSet.getString("phoneNumber"));
-                user.setEmailAddress(resultSet.getString("emailAddress"));
                 user.setPassword(resultSet.getString("password"));
+                user.setPersonalNumber(resultSet.getString("personalNumber"));
+
                 return user;
             } else
             {
@@ -536,16 +539,18 @@ public class DatabaseHandling
         }
     }
 
-    public static int checkLogin (String emailAddress, String password) throws Exception
+    public static int checkLogin (String emailAddress, String userPassword) throws Exception
     {
         int userID = -1;
-        password = SecureData.encrypt(password);
+        userPassword = SecureData.encrypt(userPassword);
 
         String query = "SELECT id FROM users WHERE emailAddress = ? AND password = ?";
         Connection connection = DriverManager.getConnection(url, userName, password);
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setString(1, emailAddress);
-        statement.setString(2, password);
+        statement.setString(2, userPassword);
+
+
         ResultSet resultSet = statement.executeQuery();
         if (resultSet.next())
         {
@@ -578,6 +583,7 @@ public class DatabaseHandling
                 user.setCurrentFine(resultSet.getDouble("currentFine"));
                 user.setPassword(resultSet.getString("password"));
                 user.setPersonalNumber(resultSet.getString("personalNumber"));
+                user.setUserType(resultSet.getString("userType"));
                 return user;
             } else
             {
@@ -586,6 +592,33 @@ public class DatabaseHandling
         } catch (Exception e)
         {
             return null;
+        }
+    }
+
+    public static boolean updateUser(User editedUser)
+    {
+        try
+        {
+            String query = "UPDATE users SET firstName = ?, lastName = ?, emailAddress = ?, phoneNumber = ?, homeAddress = ?, zipCode = ?, city = ?, identifierNumber = ?, currentFine = ?, password = ?, personalNumber = ? WHERE id = ?";
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, editedUser.getFirstName());
+            statement.setString(2, editedUser.getLastName());
+            statement.setString(3, editedUser.getEmailAddress());
+            statement.setString(4, editedUser.getPhoneNumber());
+            statement.setString(5, editedUser.getHomeAddress());
+            statement.setString(6, editedUser.getZipCode());
+            statement.setString(7, editedUser.getCity());
+            statement.setString(8, editedUser.getIdentifierNumber());
+            statement.setDouble(9, editedUser.getCurrentFine());
+            statement.setString(10, SecureData.encrypt(editedUser.getPassword()));
+            statement.setString(11, editedUser.getPersonalNumber());
+            statement.setInt(12, editedUser.getUserID());
+            return statement.executeUpdate() > 0;
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            return false;
         }
     }
 }

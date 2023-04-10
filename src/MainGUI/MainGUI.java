@@ -1,4 +1,5 @@
 package MainGUI;
+
 import User.User;
 import MainGUI.CustomMenuBar;
 
@@ -10,6 +11,7 @@ public class MainGUI
     private final int WIDTH = 800;
     private final int HEIGHT = 800;
     private User user;
+
     public MainGUI (User user)
     {
 
@@ -22,12 +24,21 @@ public class MainGUI
                 {"Borrow book", "Return book", "Show borrowings"}};
         JMenuBar menuBar = customMenuBar.createMenuBar("Menu Bar", menuNames, menuItems);
 
+
         JFrame frame = new JFrame("Library Management System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(WIDTH, HEIGHT);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setJMenuBar(menuBar);
+
+        JLabel fullNameLabel = new JLabel(user.getFirstName() + " " + user.getLastName());
+        JLabel currentDebtLabel = new JLabel("Current debt: " + user.getCurrentFine());
+
+
+        frame.add(fullNameLabel);
+        frame.add(currentDebtLabel);
+
         frame.setVisible(true);
     }
 }

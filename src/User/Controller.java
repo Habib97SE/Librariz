@@ -27,6 +27,11 @@ public class Controller
         return user;
     }
 
+    public User getUserById (String id)
+    {
+        return model.getUserById(id);
+    }
+
     public void setUser (User user)
     {
         this.user = user;
@@ -46,9 +51,9 @@ public class Controller
         return model.addUser();
     }
 
-    public boolean updateUser ()
+    public boolean updateUser (User updatedUser)
     {
-        return model.updateUser();
+        return model.updateUser(updatedUser);
     }
 
     public boolean deleteUser ()
@@ -139,7 +144,7 @@ public class Controller
     public boolean editUser (User user)
     {
         this.user = user;
-        return updateUser();
+        return updateUser(user);
     }
 
     public ArrayList<Borrowing> getBorrowingsHistory ()
