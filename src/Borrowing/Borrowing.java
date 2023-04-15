@@ -26,6 +26,7 @@ public class Borrowing
     private final String today = LocalDate.now().format(formatter);
     private String startDate;
     private String endDate;
+    private boolean activeBorrowing;
 
     public Borrowing ()
     {
@@ -33,26 +34,24 @@ public class Borrowing
         user = new User();
     }
 
-    public Borrowing (Book book, User user, String startDate, String endDate)
+    public Borrowing (Book book, User user, String startDate, String endDate, boolean activeBorrowing)
     {
         this.book = book;
         this.user = user;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.activeBorrowing = activeBorrowing;
     }
 
-    public Borrowing (Book book, User user, Timestamp startDate, Timestamp endDate)
+    public Borrowing (Book book, User user, Timestamp startDate, Timestamp endDate, boolean activeBorrowing)
     {
         this.book = book;
         this.user = user;
-        if (startDate != null)
-            this.startDate = startDate.toString();
-        else
-            this.startDate = "";
-        if (endDate != null)
-            this.endDate = endDate.toString();
-        else
-            this.endDate = "";
+        if (startDate != null) this.startDate = startDate.toString();
+        else this.startDate = "";
+        if (endDate != null) this.endDate = endDate.toString();
+        else this.endDate = "";
+        this.activeBorrowing = activeBorrowing;
     }
 
     public Borrowing (Book book, User user)
@@ -61,6 +60,7 @@ public class Borrowing
         this.user = user;
         this.startDate = "";
         this.endDate = "";
+        this.activeBorrowing = false;
     }
 
     public void setBook (Book book)
@@ -86,12 +86,9 @@ public class Borrowing
 
     public String getStartDate ()
     {
-        if (startDate == null || startDate.equals(""))
-            return "No start date";
-        if (startDate.length() > 10)
-            return startDate.substring(0, 10);
-        else
-            return startDate;
+        if (startDate == null || startDate.equals("")) return "No start date";
+        if (startDate.length() > 10) return startDate.substring(0, 10);
+        else return startDate;
     }
 
     public void setEndDate (String endDate)
@@ -101,12 +98,19 @@ public class Borrowing
 
     public String getEndDate ()
     {
-        if (endDate == null || endDate.equals(""))
-            return "No return date";
-        if (endDate.length() > 10)
-            return endDate.substring(0, 10);
-        else
-            return endDate;
+        if (endDate == null || endDate.equals("")) return "No return date";
+        if (endDate.length() > 10) return endDate.substring(0, 10);
+        else return endDate;
+    }
+
+    public void setActiveBorrowing (boolean activeBorrowing)
+    {
+        this.activeBorrowing = activeBorrowing;
+    }
+
+    public boolean getActiveBorrowing ()
+    {
+        return activeBorrowing;
     }
 
 
@@ -164,76 +168,5 @@ public class Borrowing
                 First and last name: %s %s \n
                 """, book.getTitle(), user.getFirstName(), user.getLastName());
     }
-
-//    public void borrowBook (String bookID) throws Exception
-//    {
-//        String personalNumber = "";
-//        int userId = -1;
-//        while (true) {
-//            personalNumber = JOptionPane.showInputDialog("Enter your personal number: ");
-//            String encryptedPersonalNumber = SecureData.encrypt(personalNumber);
-//            userId = DatabaseHandling.getUserIdByPersonalNumber(encryptedPersonalNumber);
-//            if (userId == -1) {
-//                JOptionPane.showMessageDialog(null, "User not found!");
-//                return;
-//            } else {
-//                break;
-//            }
-//        }
-//
-//        Borrowing borrowing = new Borrowing(bookID, userId, LocalDate.now());
-//        boolean borrowingResult = DatabaseHandling.insertNewBorrowing(borrowing);
-//        if (borrowingResult) {
-//            boolean updateResult = DatabaseHandling.updateBookNumberOfAvailableCopies(bookID, -1);
-//            if (updateResult) {
-//                String title = getBookTitle(bookID);
-//                String message = String.format("""
-//                    Book borrowed successfully!
-//                    Book details: \n
-//                    Title: %s \n
-//                    Last returned at: %s \n
-//                    Please keep in mind that for each late day you will be charged 10 SEK. \n
-//                    """, title, getReturnDateString());
-//                showDetailsDialog(message);
-//            } else {
-//                JOptionPane.showMessageDialog(null, "Book borrowing failed!");
-//            }
-//        } else {
-//            JOptionPane.showMessageDialog(null, "Book borrowing failed!");
-//        }
-//
-//    }
-//
-//    /**
-//     * Show a dialog with the given message
-//     *
-//     * @param message the message to show
-//     */
-//    private void showDetailsDialog (String message)
-//    {
-//        JOptionPane.showMessageDialog(null, message);
-//    }
-//
-//
-//    /**
-//     * Receive the book's id in the books table and return the book's title. If the book is not found, return an empty
-//     *
-//     * @param bookID the book's id in the books table
-//     * @return the book's title
-//     * @throws SQLException if the query fails
-//     */
-//    private String getBookTitle (String bookID) throws SQLException
-//    {
-//        String query = "SELECT title FROM books WHERE id = '" + bookID + "'";
-//        ResultSet resultSet = DatabaseHandling.getRow(query);
-//        assert resultSet != null;
-//        if (resultSet.next())
-//        {
-//            return resultSet.getString("title");
-//        }
-//        return "";
-//    }
-
-
 }
 

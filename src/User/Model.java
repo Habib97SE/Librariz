@@ -172,11 +172,17 @@ public class Model
 
     public ArrayList<Borrowing> getBorrowingsHistory ()
     {
+        System.out.printf("User ID: %d", user.getUserID());
         return DatabaseHandling.getBorrowingsHistory(user.getUserID());
     }
 
     public User getUserById (String id)
     {
         return DatabaseHandling.getUserById(Integer.parseInt(id));
+    }
+
+    public ArrayList<Borrowing> getCurrentBorrowings ()
+    {
+        return DatabaseHandling.getCurrentBorrowings(user.getUserID());
     }
 }

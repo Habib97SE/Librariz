@@ -1,6 +1,6 @@
 package User;
 
-import Borrowing.Borrowing;
+import Borrowing.*;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -152,6 +152,17 @@ public class Controller
     {
         user = new User();
 
+    }
+
+    public ArrayList<Borrowing> getCurrentBorrowings ()
+    {
+        return model.getCurrentBorrowings();
+    }
+
+    public boolean returnBook (Borrowing borrowing) throws Exception
+    {
+        BorrowingView borrowingView = new BorrowingView(user);
+        return borrowingView.returnBook();
     }
 
     public enum Error

@@ -1,17 +1,10 @@
 package User;
 
 import Borrowing.Borrowing;
-import Database.SecureData;
-import MainGUI.Initial;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicReference;
 
 
 public class UserView
@@ -19,18 +12,13 @@ public class UserView
     private final int WIDTH = 800;
     private final int HEIGHT = 800;
 
-    private Controller controller;
+    private final Controller controller;
     private User user;
 
     public UserView (User user)
     {
         this.user = user;
         this.controller = new Controller(user);
-    }
-
-    public UserView ()
-    {
-        controller = new Controller();
     }
 
 
@@ -42,8 +30,8 @@ public class UserView
         frame.setLayout(new GridLayout(12, 2));
 
 
-        String columnNames[] = {"First name", "Last name", "Email address", "Phone number", "Home address", "Zip code", "City", "Identifier number", "Current fine"};
-        String data[][] = new String[1][9];
+        String[] columnNames = {"First name", "Last name", "Email address", "Phone number", "Home address", "Zip code", "City", "Identifier number", "Current fine"};
+        String[][] data = new String[1][9];
 
         user = controller.getUserById(Integer.toString(user.getUserID()));
 
@@ -82,8 +70,8 @@ public class UserView
             frame.setSize(WIDTH, HEIGHT);
             frame.setLayout(new GridLayout(users.size() + 1, 12));
 
-            String columnNames[] = {"First name", "Last name", "Email address", "Phone number", "Home address", "Zip code", "City", "Identifier number", "Current fine", "User type"};
-            String data[][] = new String[users.size()][10];
+            String[] columnNames = {"First name", "Last name", "Email address", "Phone number", "Home address", "Zip code", "City", "Identifier number", "Current fine", "User type"};
+            String[][] data = new String[users.size()][10];
 
             for (int i = 0; i < users.size(); i++)
             {
@@ -142,7 +130,7 @@ public class UserView
         JLabel userTypeLabel = new JLabel("User type: ");
         // create dropdown menu for user type
         String[] userTypeOptions = {"Borrower", "Librarian", "Admin"};
-        JComboBox userType = new JComboBox(userTypeOptions);
+        JComboBox<String> userType = new JComboBox<>(userTypeOptions);
 
 
         JButton addUserButton = new JButton("Add user");
@@ -240,7 +228,7 @@ public class UserView
                 {
                     JOptionPane.showMessageDialog(null, "User not added", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-            } catch (Exception ex)
+            } catch (Exception ignored)
             {
 
             }
@@ -275,7 +263,6 @@ public class UserView
 
         deleteUserButton.addActionListener(e ->
         {
-            User user = new User();
 
             if (controller.deleteUser())
             {
@@ -399,6 +386,8 @@ public class UserView
         Object[][] data = new Object[borrowings.size()][3];
         for (int i = 0; i < borrowings.size(); i++)
         {
+            if (borrowings.get(i).getActiveBorrowing())
+                continue;
             data[i][0] = borrowings.get(i).getBook().getTitle();
             data[i][1] = borrowings.get(i).getStartDate();
             data[i][2] = borrowings.get(i).getEndDate();
@@ -411,8 +400,44 @@ public class UserView
 
     }
 
-    public void logOut () throws Exception
+    public void showCurrentBorrowings ()
     {
-        this.user = null;
+        System.out.println("showCurrentBorrowings()");
+        ArrayList<Borrowing> borrowings = controller.getCurrentBorrowings();
+
+        if (borrowings.size() == 0)
+        {
+            JOptionPane.showMessageDialog(null, "No borrowings found", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        JFrame frame = new JFrame("Current borrowings");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(WIDTH, HEIGHT);
+        frame.setLayout(new GridLayout(2, 2));
+
+        String fullName = this.user.getFullName();
+        // make first letter of first name and last name uppercase
+        fullName = fullName.substring(0, 1).toUpperCase() + fullName.substring(1);
+        JLabel fullNameLabel = new JLabel(fullName + "'s current borrowings");
+
+        String[] columnNames = {"Book title", "Borrowing date", "Return date", "Actions"};
+        Object[][] data = new Object[borrowings.size()][3];
+        for (int i = 0; i < borrowings.size(); i++)
+        {
+            if (borrowings.get(i).getActiveBorrowing())
+            {
+                data[i][0] = borrowings.get(i).getBook().getTitle();
+                data[i][1] = borrowings.get(i).getStartDate();
+                data[i][2] = borrowings.get(i).getEndDate();
+            }
+        }
+        JTable table = new JTable(data, columnNames);
+        JScrollPane scrollPane = new JScrollPane(table);
+        frame.add(fullNameLabel);
+        frame.add(scrollPane);
+        frame.setVisible(true);
+
     }
+
 }

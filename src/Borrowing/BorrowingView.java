@@ -115,13 +115,13 @@ public class BorrowingView
         return;
     }
 
-    public void returnBook () throws Exception
+    public boolean returnBook () throws Exception
     {
         User user = getUserByPersonalNumber();
         Book book = getBookByISBN();
 
         if (user == null || book == null)
-            return;
+            return false;
 
         HashMap<String, String> result = controller.returnBook(book, user);
 
@@ -145,5 +145,6 @@ public class BorrowingView
             JOptionPane.showMessageDialog(null, "Book not returned!");
         }
 
+        return false;
     }
 }

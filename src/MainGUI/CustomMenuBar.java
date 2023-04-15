@@ -39,7 +39,7 @@ public class CustomMenuBar extends JMenuBar
     private final String[][] borrowerMenuItems = {
             {"Show user", "Edit user"},
             {"Find book", "Show books"},
-            {"Borrow book", "Show borrowings", "Return book"}
+            {"Borrow book", "Show borrowings", "Your current borrowings", "Return book"}
     };
 
     private final String[][] librarianMenuItems = {
@@ -199,6 +199,9 @@ public class CustomMenuBar extends JMenuBar
             case "Show borrowings":
                 // Call method to show borrowings
                 userView.showBorrowingsHistory();
+                break;
+            case "Your current borrowings":
+                userView.showCurrentBorrowings();
                 break;
             default:
                 JOptionPane.showMessageDialog(null, "Invalid menu item", "Error", JOptionPane.ERROR_MESSAGE);

@@ -449,11 +449,14 @@ public class DatabaseHandling
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next())
             {
+                boolean activeBorrowing = resultSet.getInt("activeBorrowing") == 1;
+                if (activeBorrowing)
+                    continue;
                 Timestamp borrowingDate = resultSet.getTimestamp("borrowingDate");
                 Timestamp returnDate = resultSet.getTimestamp("returnDate");
-                Timestamp actualReturnedDate = resultSet.getTimestamp("actualReturnedDate");
                 Borrowing borrowing = new Borrowing(getBookByID(resultSet.getString("bookId")),
-                        getUserByID(resultSet.getInt("userId")), borrowingDate, returnDate);
+                        getUserByID(resultSet.getInt("userId")), borrowingDate, returnDate,
+                        activeBorrowing);
 
                 borrowings.add(borrowing);
             }
@@ -593,7 +596,7 @@ public class DatabaseHandling
         }
     }
 
-    public static boolean updateUser(User editedUser)
+    public static boolean updateUser (User editedUser)
     {
         try
         {
@@ -617,6 +620,36 @@ public class DatabaseHandling
         {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public static ArrayList<Borrowing> getCurrentBorrowings (int userID)
+    {
+        ArrayList<Borrowing> borrowings = new ArrayList<>();
+        try
+        {
+            String query = "SELECT * FROM borrowings WHERE userID = ?";
+            Connection connection = DriverManager.getConnection(url, userName, password);
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, userID);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next())
+            {
+                if (resultSet.getInt("activeBorrowing") == 0)
+                    continue;
+
+                Borrowing borrowing = new Borrowing();
+                borrowing.setBook(getBookByID(resultSet.getString("bookID")));
+                borrowing.setStartDate(resultSet.getString("borrowingDate"));
+                borrowing.setEndDate(resultSet.getString("returnDate"));
+                borrowing.setActiveBorrowing(true);
+                borrowings.add(borrowing);
+            }
+            return borrowings;
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            return borrowings;
         }
     }
 }
