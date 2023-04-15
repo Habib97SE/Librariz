@@ -2,6 +2,7 @@ package User;
 
 import Borrowing.Borrowing;
 import Database.SecureData;
+import MainGUI.Initial;
 
 import javax.swing.*;
 import java.awt.*;
@@ -67,6 +68,11 @@ public class UserView
 
     public void showUsers ()
     {
+        if (!user.getUserType().equals("1"))
+        {
+            JOptionPane.showMessageDialog(null, "You do not have permission to view all users");
+            return;
+        }
 
         ArrayList<User> users = controller.getAllUsers();
         if (users != null)
@@ -133,6 +139,11 @@ public class UserView
         JTextField personalNumber = new JTextField();
         JLabel passwordLabel = new JLabel("Password: ");
         JPasswordField password = new JPasswordField();
+        JLabel userTypeLabel = new JLabel("User type: ");
+        // create dropdown menu for user type
+        String[] userTypeOptions = {"Borrower", "Librarian", "Admin"};
+        JComboBox userType = new JComboBox(userTypeOptions);
+
 
         JButton addUserButton = new JButton("Add user");
 
@@ -155,6 +166,8 @@ public class UserView
         frame.add(personalNumber);
         frame.add(passwordLabel);
         frame.add(password);
+        frame.add(userTypeLabel);
+        frame.add(userType);
         frame.add(addUserButton);
 
 
@@ -206,7 +219,15 @@ public class UserView
             user.setZipCode(zipCode.getText());
             user.setCity(city.getText());
             user.setPersonalNumber(personalNumber.getText());
-            user.setPassword(password.getText());
+
+            StringBuilder passwordStr = new StringBuilder();
+            for (char c : password.getPassword())
+            {
+                passwordStr.append(c);
+            }
+
+            user.setPassword(passwordStr.toString());
+            user.setUserType(String.valueOf(userType.getSelectedIndex() + 1));
 
             try
             {
@@ -230,7 +251,15 @@ public class UserView
 
     public void deleteUser ()
     {
+
+        // if userType != "1" then show permission denied message
+        if (!this.user.getUserType().equals("1"))
+        {
+            JOptionPane.showMessageDialog(null, "Permission denied", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         JFrame frame = new JFrame("Delete user");
+
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(WIDTH, HEIGHT);
         frame.setLayout(new GridLayout(2, 2));
@@ -349,12 +378,18 @@ public class UserView
      */
     public void showBorrowingsHistory ()
     {
+        ArrayList<Borrowing> borrowings = controller.getBorrowingsHistory();
+        if (borrowings.size() == 0)
+        {
+            JOptionPane.showMessageDialog(null, "No borrowings found", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         JFrame frame = new JFrame("Borrowings history");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(WIDTH, HEIGHT);
         frame.setLayout(new GridLayout(2, 2));
 
-        ArrayList<Borrowing> borrowings = controller.getBorrowingsHistory();
         String fullName = this.user.getFullName();
         // make first letter of first name and last name uppercase
         fullName = fullName.substring(0, 1).toUpperCase() + fullName.substring(1);
@@ -365,8 +400,8 @@ public class UserView
         for (int i = 0; i < borrowings.size(); i++)
         {
             data[i][0] = borrowings.get(i).getBook().getTitle();
-            data[i][1] = borrowings.get(i).getBorrowingDate();
-            data[i][2] = borrowings.get(i).getReturnDate();
+            data[i][1] = borrowings.get(i).getStartDate();
+            data[i][2] = borrowings.get(i).getEndDate();
         }
         JTable table = new JTable(data, columnNames);
         JScrollPane scrollPane = new JScrollPane(table);
@@ -376,4 +411,8 @@ public class UserView
 
     }
 
+    public void logOut () throws Exception
+    {
+        this.user = null;
+    }
 }

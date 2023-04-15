@@ -5,6 +5,7 @@ import MainGUI.CustomMenuBar;
 
 
 import javax.swing.*;
+import java.util.Objects;
 
 public class MainGUI
 {
@@ -14,18 +15,27 @@ public class MainGUI
 
     public MainGUI (User user)
     {
+        JFrame frame = new JFrame("Library Management System");
 
         this.user = user;
 
         CustomMenuBar customMenuBar = new CustomMenuBar(user);
-        String[] menuNames = {"User", "Book", "Borrowing"};
-        String[][] menuItems = {{"Add new user", "Edit user", "Delete user", "Show user",
-                "Show users"}, {"Find book", "Add new book", "Edit book", "Delete book", "Show books"},
-                {"Borrow book", "Return book", "Show borrowings"}};
-        JMenuBar menuBar = customMenuBar.createMenuBar("Menu Bar", menuNames, menuItems);
+
+        JMenuBar menuBar = null;
+        if (Objects.equals(this.user.getUserType(), "0"))
+        {
+            menuBar = customMenuBar.createAdminMenuBar();
+        }
+        else if (Objects.equals(this.user.getUserType(), "1"))
+        {
+            menuBar = customMenuBar.createLibrarianMenuBar();
+        }
+        else if (Objects.equals(this.user.getUserType(), "2"))
+        {
+            menuBar = customMenuBar.createBorrowerMenuBar();
+        }
 
 
-        JFrame frame = new JFrame("Library Management System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(WIDTH, HEIGHT);
         frame.setLocationRelativeTo(null);
@@ -38,7 +48,7 @@ public class MainGUI
 
         frame.add(fullNameLabel);
         frame.add(currentDebtLabel);
-
         frame.setVisible(true);
+
     }
 }

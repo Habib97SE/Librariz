@@ -8,6 +8,7 @@ import Database.DatabaseHandling;
 import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -38,6 +39,20 @@ public class Borrowing
         this.user = user;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    public Borrowing (Book book, User user, Timestamp startDate, Timestamp endDate)
+    {
+        this.book = book;
+        this.user = user;
+        if (startDate != null)
+            this.startDate = startDate.toString();
+        else
+            this.startDate = "";
+        if (endDate != null)
+            this.endDate = endDate.toString();
+        else
+            this.endDate = "";
     }
 
     public Borrowing (Book book, User user)
@@ -71,7 +86,12 @@ public class Borrowing
 
     public String getStartDate ()
     {
-        return startDate;
+        if (startDate == null || startDate.equals(""))
+            return "No start date";
+        if (startDate.length() > 10)
+            return startDate.substring(0, 10);
+        else
+            return startDate;
     }
 
     public void setEndDate (String endDate)
@@ -81,7 +101,12 @@ public class Borrowing
 
     public String getEndDate ()
     {
-        return endDate;
+        if (endDate == null || endDate.equals(""))
+            return "No return date";
+        if (endDate.length() > 10)
+            return endDate.substring(0, 10);
+        else
+            return endDate;
     }
 
 

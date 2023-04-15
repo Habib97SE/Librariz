@@ -1,10 +1,6 @@
 package Database;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 import Borrowing.*;
@@ -453,9 +449,11 @@ public class DatabaseHandling
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next())
             {
+                Timestamp borrowingDate = resultSet.getTimestamp("borrowingDate");
+                Timestamp returnDate = resultSet.getTimestamp("returnDate");
+                Timestamp actualReturnedDate = resultSet.getTimestamp("actualReturnedDate");
                 Borrowing borrowing = new Borrowing(getBookByID(resultSet.getString("bookId")),
-                        getUserByID(resultSet.getInt("userId")), resultSet.getString("borrowDate"),
-                        resultSet.getString("actualReturnedDate"));
+                        getUserByID(resultSet.getInt("userId")), borrowingDate, returnDate);
 
                 borrowings.add(borrowing);
             }

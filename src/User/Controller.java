@@ -39,10 +39,6 @@ public class Controller
 
     public boolean addUser (User user) throws Exception
     {
-        if (!Objects.equals(user.getUserType(), "1"))
-        {
-            user.setUserType("0");
-        }
         String encryptedPersonalNumber = Database.SecureData.encrypt(user.getPersonalNumber());
         String encryptedPassword = Database.SecureData.encrypt(user.getPassword());
         user.setPersonalNumber(encryptedPersonalNumber);
@@ -150,6 +146,12 @@ public class Controller
     public ArrayList<Borrowing> getBorrowingsHistory ()
     {
         return model.getBorrowingsHistory();
+    }
+
+    public void logOut ()
+    {
+        user = new User();
+
     }
 
     public enum Error

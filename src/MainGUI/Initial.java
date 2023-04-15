@@ -17,18 +17,12 @@ public class Initial
 
     public Initial () throws Exception
     {
-        // ask user for their username and password and check if they are valid and if they are, then log them in
-        JFrame frame = new JFrame("Library Management System");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
-        frame.setLocationRelativeTo(null);
-
-        frame.setVisible(true);
 
         while (true)
         {
             JPanel panel = new JPanel();
             panel.setLayout(new GridLayout(2, 2));
+            panel.setPreferredSize(new Dimension(250, 100));
             panel.add(new JLabel("E-mail:"));
             JTextField emailAddressTextField = new JTextField();
             panel.add(emailAddressTextField);
